@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tencryn <41876297+Tencryn@users.noreply.github.com>
+Date: Wed, 10 Nov 2021 23:12:11 +0000
+Subject: [PATCH] Bamboo Config
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index ccfb8a8dcd51bf998c79298a22e38cebb2be6d39..bf4c855721aa43b57bd60fcf551a0e36b5482fd2 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1730,6 +1730,13 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+         }
+         // Purpur end
+ 
++        // Bamboo start
++        @NotNull
++        public org.bukkit.configuration.file.YamlConfiguration getBambooConfig() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++        // Bamboo end
++
+         /**
+          * Sends the component to the player
+          *
