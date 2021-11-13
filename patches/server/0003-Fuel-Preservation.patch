@@ -1,0 +1,95 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tencryn <41876297+Tencryn@users.noreply.github.com>
+Date: Sat, 13 Nov 2021 19:30:45 +0000
+Subject: [PATCH] Fuel Preservation
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+index 1d08c05181f310bc904f71a0d70853960974690e..5f6cc3878d041f237bd51b6349008bc7efe1463d 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -77,6 +77,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+     public double cookSpeedMultiplier = 1.0; // Paper - cook speed multiplier API
+     public int cookingProgress;
+     public int cookingTotalTime;
++    public boolean isPreservingFuel; // Bamboo - fuel preservation
+     protected final ContainerData dataAccess;
+     private final Object2IntOpenHashMap<ResourceLocation> recipesUsed;
+     public final RecipeType<? extends AbstractCookingRecipe> recipeType;
+@@ -307,6 +308,12 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+             this.cookSpeedMultiplier = nbt.getDouble("Paper.CookSpeedMultiplier");
+         }
+         // Paper end
++
++        // Bamboo start - fuel preservation
++        if (nbt.contains("Bamboo.PreserveFuel")) {
++            this.isPreservingFuel = nbt.getBoolean("Bamboo.PreserveFuel");
++        }
++        // Bamboo end
+     }
+ 
+     @Override
+@@ -316,6 +323,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+         nbt.putShort("CookTime", (short) this.cookingProgress);
+         nbt.putShort("CookTimeTotal", (short) this.cookingTotalTime);
+         nbt.putDouble("Paper.CookSpeedMultiplier", this.cookSpeedMultiplier); // Paper - cook speed multiplier API
++        nbt.putBoolean("Bamboo.PreserveFuel", this.isPreservingFuel); // Bamboo - fuel preservation
+         ContainerHelper.saveAllItems(nbt, this.items);
+         CompoundTag nbttagcompound1 = new CompoundTag();
+ 
+@@ -329,9 +337,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+     public static void serverTick(Level world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
+         boolean flag = blockEntity.isLit();
+         boolean flag1 = false;
++        boolean flag2 = blockEntity.isPreservingFuel; // Bamboo, fuel preservation
+ 
+         if (blockEntity.isLit()) {
+             --blockEntity.litTime;
++            blockEntity.isPreservingFuel = false; // Bamboo
+         }
+ 
+         ItemStack itemstack = (ItemStack) blockEntity.items.get(1);
+@@ -414,14 +424,29 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+                 }
+             } else {
+                 blockEntity.cookingProgress = 0;
++
++                // Bamboo start - fuel preservation
++                if (net.rocryn.bamboo.BambooConfig.preserveFuel && blockEntity.isLit()) {
++                    ++blockEntity.litTime;
++                    blockEntity.isPreservingFuel = true;
++                }
++                // Bamboo end
+             }
+         }
+ 
+-        if (flag != blockEntity.isLit()) {
++        // Bamboo start - fuel preservation
++        if (flag != blockEntity.isLit() || flag2 != blockEntity.isPreservingFuel) {
++            boolean lit = blockEntity.isLit();
++
++            if (flag2 != blockEntity.isPreservingFuel) {
++                lit = !blockEntity.isPreservingFuel;
++            }
++
+             flag1 = true;
+-            state = (BlockState) state.setValue(AbstractFurnaceBlock.LIT, blockEntity.isLit());
++            state = (BlockState) state.setValue(AbstractFurnaceBlock.LIT, lit);
+             world.setBlock(pos, state, 3);
+         }
++        // Bamboo end
+ 
+         if (flag1) {
+             setChanged(world, pos, state);
+diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+index fab62b8ff10eaa75f4b5c8032aac69f979950e98..b5420935250221648ff74b66bbd3224807e38c8c 100644
+--- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
++++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+@@ -133,4 +133,7 @@ public class BambooConfig {
+     private static void brandName() {
+         brandName = getString("brand-name", brandName);
+     }
++
++    public static Boolean preserveFuel = false;
++    private static void preserveFuel() { preserveFuel = getBoolean("furnaces.preserve-fuel", preserveFuel); }
+ }
