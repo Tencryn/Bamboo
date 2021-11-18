@@ -5,7 +5,7 @@ Subject: [PATCH] Adjustable Monster Spawn Light Level
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-index e94618f4c1552bb1ef20067aa3201c6574b5c307..0fb151d78965256ec1006d5f10dc29f914fbfaba 100644
+index e94618f4c1552bb1ef20067aa3201c6574b5c307..92c40dc662eb601b5dcddb0d19244e2c83481d0a 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
 @@ -23,6 +23,7 @@ import net.minecraft.world.level.LevelAccessor;
@@ -34,7 +34,7 @@ index e94618f4c1552bb1ef20067aa3201c6574b5c307..0fb151d78965256ec1006d5f10dc29f9
 +        }
 +
 +        int i = world.getLevel().isThundering() ? world.getMaxLocalRawBrightness(pos, 10) : world.getMaxLocalRawBrightness(pos);
-+        return i <= random.nextInt(Math.max(net.rocryn.bamboo.BambooConfig.monsterSpawnLightLevel, 8));
++        return i <= random.nextInt(Math.max(net.rocryn.bamboo.BambooConfig.monsterSpawnLightLevel + 1, 8));
 +        // Bamboo end
      }
  
