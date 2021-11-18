@@ -54,10 +54,10 @@ index d5c61053f6af91aa5d0894750ab86372a91c9a73..e425439b05405d58b4d088b5316489fb
          this.setFlightAllowed(dedicatedserverproperties.allowFlight);
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..fab62b8ff10eaa75f4b5c8032aac69f979950e98
+index 0000000000000000000000000000000000000000..4a96195e6e1d4823f34cc7b7cb51d0d1c23c1d47
 --- /dev/null
 +++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-@@ -0,0 +1,136 @@
+@@ -0,0 +1,142 @@
 +package net.rocryn.bamboo;
 +
 +import com.google.common.base.Throwables;
@@ -193,9 +193,15 @@ index 0000000000000000000000000000000000000000..fab62b8ff10eaa75f4b5c8032aac69f9
 +    private static void brandName() {
 +        brandName = getString("brand-name", brandName);
 +    }
++
++    public static Boolean preserveFuel = false;
++    private static void preserveFuel() { preserveFuel = getBoolean("furnaces.preserve-fuel", preserveFuel); }
++
++    public static Integer monsterSpawnLightLevel = 0;
++    private static void HostileSpawnLightLevel() { monsterSpawnLightLevel = getInt("monsters.spawnLightLevel", monsterSpawnLightLevel); }
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b90a431f0f3f7bbff1f146afef12cc62695bb6f4..e13798284aa93b7838f05ae3e63adb96ff8eb405 100644
+index b75b5cd0fb1ec721d039ae11deb12d88a8b68233..85f8921455ad736cc7055c8fe1165728a8205de8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -925,6 +925,7 @@ public final class CraftServer implements Server {
