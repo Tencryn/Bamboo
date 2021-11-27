@@ -54,10 +54,10 @@ index d5c61053f6af91aa5d0894750ab86372a91c9a73..e425439b05405d58b4d088b5316489fb
          this.setFlightAllowed(dedicatedserverproperties.allowFlight);
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..f6dd1e033abbcf4b71e197a1318166e90cf4ecf0
+index 0000000000000000000000000000000000000000..61187b99639193ecf9b321286eed3e964110fa7b
 --- /dev/null
 +++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-@@ -0,0 +1,145 @@
+@@ -0,0 +1,148 @@
 +package net.rocryn.bamboo;
 +
 +import com.google.common.base.Throwables;
@@ -199,6 +199,9 @@ index 0000000000000000000000000000000000000000..f6dd1e033abbcf4b71e197a1318166e9
 +
 +    public static Integer monsterSpawnLightLevel = 0;
 +    private static void hostileSpawnLightLevel() { monsterSpawnLightLevel = getInt("monsters.spawn-light-level", monsterSpawnLightLevel); }
++
++    public static Boolean endermanSpawnerTeleport = true;
++    private static void endermanSpawnerTeleport() { endermanSpawnerTeleport = getBoolean("monsters.enderman.teleport-if-spawned-via-spawner", endermanSpawnerTeleport); }
 +
 +    public static Boolean sheepGriefGrass = true;
 +    private static void sheepGriefGrass() { sheepGriefGrass = getBoolean("animals.sheep.grief-grass", sheepGriefGrass); }
