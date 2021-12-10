@@ -4,7 +4,7 @@ plugins {
     java
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "7.1.0" apply false
-    id("io.papermc.paperweight.patcher") version "1.1.14"
+    id("io.papermc.paperweight.patcher") version "1.2.0"
 }
 
 repositories {
@@ -52,6 +52,7 @@ subprojects {
         maven("https://repo.md-5.net/content/repositories/releases/")
         maven("https://hub.spigotmc.org/nexus/content/groups/public/")
         maven("https://jitpack.io")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
@@ -68,7 +69,10 @@ paperweight {
         withStandardPatcher {
             baseName("Purpur")
 
+            apiPatchDir.set(layout.projectDirectory.dir("patches/api"))
             apiOutputDir.set(layout.projectDirectory.dir("Bamboo-API"))
+            
+            serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
             serverOutputDir.set(layout.projectDirectory.dir("Bamboo-Server"))
         }
     }
