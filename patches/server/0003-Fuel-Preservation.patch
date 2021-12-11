@@ -5,7 +5,7 @@ Subject: [PATCH] Fuel Preservation
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index f17cf16a0818f031b4697b2a08afe0905ba00da6..687809dff61fe4c867f95769e247f6aa4bd2c1d3 100644
+index f5fd6e0fd67c1b760000c2e75ce09d1c680b4cf6..ad538db7371598016b340e10fb3ef46db99badd1 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 @@ -77,6 +77,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
@@ -37,7 +37,7 @@ index f17cf16a0818f031b4697b2a08afe0905ba00da6..687809dff61fe4c867f95769e247f6aa
          ContainerHelper.saveAllItems(nbt, this.items);
          CompoundTag nbttagcompound1 = new CompoundTag();
  
-@@ -329,9 +337,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -328,9 +336,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
      public static void serverTick(Level world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
          boolean flag = blockEntity.isLit();
          boolean flag1 = false;
@@ -49,7 +49,7 @@ index f17cf16a0818f031b4697b2a08afe0905ba00da6..687809dff61fe4c867f95769e247f6aa
          }
  
          ItemStack itemstack = (ItemStack) blockEntity.items.get(1);
-@@ -414,14 +424,29 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -413,14 +423,29 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
                  }
              } else {
                  blockEntity.cookingProgress = 0;

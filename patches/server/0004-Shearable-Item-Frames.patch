@@ -5,11 +5,11 @@ Subject: [PATCH] Shearable Item Frames
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java b/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
-index 90f1ecd97eef93316f61bf5d761d33c313e1a077..4428dbadb4a770529786e377842fed2f9844be14 100644
+index e4c8b622cf3c7c57ada4c2e20a4b4a0f0b17de12..f962968235a3d36ca9645f48a0b7714c905c258f 100644
 --- a/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
 +++ b/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
-@@ -187,6 +187,11 @@ public class ItemFrame extends HangingEntity {
-                 // CraftBukkit end
+@@ -195,6 +195,11 @@ public class ItemFrame extends HangingEntity {
+                 // Paper end
                  this.dropItem(source.getEntity(), false);
                  this.playSound(this.getRemoveItemSound(), 1.0F, 1.0F);
 +                // Bamboo start - Make visible if was sheared
@@ -20,10 +20,15 @@ index 90f1ecd97eef93316f61bf5d761d33c313e1a077..4428dbadb4a770529786e377842fed2f
              }
  
              return true;
-@@ -440,8 +445,17 @@ public class ItemFrame extends HangingEntity {
+@@ -452,13 +457,20 @@ public class ItemFrame extends HangingEntity {
                      }
                  }
              } else {
+-                // Paper start - call PlayerItemFrameChangeEvent
+-                var event = new PlayerItemFrameChangeEvent((org.bukkit.entity.Player) player.getBukkitEntity(), (org.bukkit.entity.ItemFrame) this.getBukkitEntity(), this.getItem().asBukkitCopy(), PlayerItemFrameChangeEvent.ItemFrameChangeAction.ROTATE);
+-                if (!event.callEvent()) return InteractionResult.FAIL;
+-                setItem(ItemStack.fromBukkitCopy(event.getItemStack()), false, false);
+-                // Paper end
 -                this.playSound(this.getRotateItemSound(), 1.0F, 1.0F);
 -                this.setRotation(this.getRotation() + 1);
 +                // Bamboo start - Shearing makes item frame invisible
@@ -31,10 +36,13 @@ index 90f1ecd97eef93316f61bf5d761d33c313e1a077..4428dbadb4a770529786e377842fed2f
 +                    player.getBukkitEntity().hasPermission("bamboo.frames.shear")) {
 +                    this.setInvisible(true);
 +                } else {
-+                    //
++                    // Paper start - call PlayerItemFrameChangeEvent
++                    var event = new PlayerItemFrameChangeEvent((org.bukkit.entity.Player) player.getBukkitEntity(), (org.bukkit.entity.ItemFrame) this.getBukkitEntity(), this.getItem().asBukkitCopy(), PlayerItemFrameChangeEvent.ItemFrameChangeAction.ROTATE);
++                    if (!event.callEvent()) return InteractionResult.FAIL;
++                    setItem(ItemStack.fromBukkitCopy(event.getItemStack()), false, false);
++                    // Paper end
 +                    this.playSound(this.getRotateItemSound(), 1.0F, 1.0F);
 +                    this.setRotation(this.getRotation() + 1);
-+                    //
 +                }
 +                // Bamboo end
              }

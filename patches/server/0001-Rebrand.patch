@@ -5,37 +5,37 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 7168672c9d38f0f30ee8a683df7f60d686bada23..5ed9ef4594660ea79bfd7f5b4e2fc4e7a703f741 100644
+index a387cbf3652a84028dc8be1da7f10c4bb84abf3d..ff231dafa20728593898dc1939bd392e75d896c9 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -22,7 +22,7 @@ repositories {
- }
+@@ -19,7 +19,7 @@ repositories {
  
  dependencies {
--    implementation(project(":Purpur-API")) // Airplane // Purpur
-+    implementation(project(":Bamboo-API")) // Airplane // Purpur // Bamboo
-     implementation("io.papermc.paper:paper-mojangapi:1.17.1-R0.1-SNAPSHOT") // Airplane
-     // Paper start
-     implementation("org.jline:jline-terminal-jansi:3.21.0")
-@@ -83,7 +83,7 @@ tasks.jar {
+     // Purpur start
+-    implementation(project(":purpur-api"))
++    implementation(project(":Bamboo-API")) // Bamboo
+     implementation("io.papermc.paper:paper-mojangapi:1.18-R0.1-SNAPSHOT") {
+         exclude("io.papermc.paper", "paper-api")
+     }
+@@ -74,7 +74,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
--            "Implementation-Version" to "git-Purpur-$implementationVersion", // Airplane // Purpur
-+            "Implementation-Version" to "git-Bamboo-$implementationVersion", // Airplane // Purpur // Bamboo
+-            "Implementation-Version" to "git-Purpur-$implementationVersion", // Purpur
++            "Implementation-Version" to "git-Bamboo-$implementationVersion", // Purpur // Bamboo
              "Implementation-Vendor" to date, // Paper
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 05f1b6d103ec20f196b60944f5bc007384c449f1..1281923bda2c436108ee8bc15161dcfd20fcb835 100644
+index 7bc497bcae6a6a752e3c432178cb1e3c633e0bec..b66547095fdc655055812949872caca8acaf58ea 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
 @@ -593,7 +593,7 @@ public class Metrics {
              boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
              // Only start Metrics, if it's enabled in the config
              if (config.getBoolean("enabled", true)) {
--                Metrics metrics = new Metrics("Purpur", serverUUID, logFailedRequests, Bukkit.getLogger()); // Airplane // Purpur
-+                Metrics metrics = new Metrics("Bamboo", serverUUID, logFailedRequests, Bukkit.getLogger()); // Airplane // Purpur // Bamboo
+-                Metrics metrics = new Metrics("Purpur", serverUUID, logFailedRequests, Bukkit.getLogger()); // Purpur
++                Metrics metrics = new Metrics("Bamboo", serverUUID, logFailedRequests, Bukkit.getLogger()); // Purpur // Bamboo
                  metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
                      String minecraftVersion = Bukkit.getVersion();
                      minecraftVersion = minecraftVersion.substring(minecraftVersion.indexOf("MC: ") + 4, minecraftVersion.length() - 1);
@@ -43,37 +43,36 @@ index 05f1b6d103ec20f196b60944f5bc007384c449f1..1281923bda2c436108ee8bc15161dcfd
  
                  metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                  metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : (PaperConfig.isProxyOnlineMode() ? "bungee" : "offline"))); // Purpur
--                metrics.addCustomChart(new Metrics.SimplePie("purpur_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown")); // Airplane // Purpur
-+                metrics.addCustomChart(new Metrics.SimplePie("bamboo_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown")); // Airplane // Purpur // Bamboo
+-                metrics.addCustomChart(new Metrics.SimplePie("purpur_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown")); // Purpur
++                metrics.addCustomChart(new Metrics.SimplePie("bamboo_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown")); // Purpur // Bamboo
  
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                      Map<String, Map<String, Integer>> map = new HashMap<>();
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-index aadd6550a5892e403f7b0bbef008461c1566a1bb..0d392980a3154b1eadf1438b81ebf648f767d5f4 100644
+index 3054fe189b0cf771697c896f7def32892edc4925..125d2a6ba9d71a267b90c21dc45a31df664ec8e9 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 +++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-@@ -19,8 +19,7 @@ import java.util.stream.StreamSupport;
+@@ -19,7 +19,7 @@ import java.util.stream.StreamSupport;
  
  public class PaperVersionFetcher implements VersionFetcher {
      private static final java.util.regex.Pattern VER_PATTERN = java.util.regex.Pattern.compile("^([0-9\\.]*)\\-.*R"); // R is an anchor, will always give '-R' at end
--    private static final String DOWNLOAD_PAGE = "https://purpur.pl3x.net/downloads/";
--    private static final String JENKINS_URL = "https://ci.pl3x.net/job/Purpur/lastSuccessfulBuild/buildNumber"; // Purpur
+-    private static final String DOWNLOAD_PAGE = "https://purpurmc.org/downloads/"; // Purpur
 +
      private static @Nullable String mcVer;
  
      @Override
-@@ -31,8 +30,8 @@ public class PaperVersionFetcher implements VersionFetcher {
+@@ -30,8 +30,8 @@ public class PaperVersionFetcher implements VersionFetcher {
      @Nonnull
      @Override
      public Component getVersionMessage(@Nonnull String serverVersion) {
--        String[] parts = serverVersion.substring("git-Purpur-".length()).split("[-\\s]"); // Airplane // Purpur
--        final Component updateMessage = getUpdateStatusMessage("pl3xgaming/Purpur", "ver/" + getMinecraftVersion(), parts[0]); // Airplane // Purpur
-+        String[] parts = serverVersion.substring("git-Bamboo-".length()).split("[-\\s]"); // Airplane // Purpur // Bamboo
-+        final Component updateMessage = getUpdateStatusMessage("Tencryn/Bamboo", "ver/" + getMinecraftVersion(), parts[0]); // Airplane // Purpur // Bamboo
+-        String[] parts = serverVersion.substring("git-Purpur-".length()).split("[-\\s]"); // Purpur
+-        final Component updateMessage = getUpdateStatusMessage("PurpurMC/Purpur", "ver/" + getMinecraftVersion(), parts[0]); // Purpur
++        String[] parts = serverVersion.substring("git-Bamboo-".length()).split("[-\\s]"); // Purpur // Bamboo
++        final Component updateMessage = getUpdateStatusMessage("Tencryn/Bamboo", "ver/" + getMinecraftVersion(), parts[0]); // Purpur // Bamboo
          final Component history = getHistory();
  
          return history != null ? TextComponent.ofChildren(updateMessage, Component.newline(), history) : updateMessage;
-@@ -56,13 +55,11 @@ public class PaperVersionFetcher implements VersionFetcher {
+@@ -55,13 +55,11 @@ public class PaperVersionFetcher implements VersionFetcher {
  
      private static Component getUpdateStatusMessage(@Nonnull String repo, @Nonnull String branch, @Nonnull String versionInfo) {
          int distance;
@@ -92,7 +91,7 @@ index aadd6550a5892e403f7b0bbef008461c1566a1bb..0d392980a3154b1eadf1438b81ebf648
  
          switch (distance) {
              case -1:
-@@ -72,34 +69,29 @@ public class PaperVersionFetcher implements VersionFetcher {
+@@ -71,32 +69,7 @@ public class PaperVersionFetcher implements VersionFetcher {
              case -2:
                  return Component.text("Unknown version", NamedTextColor.YELLOW);
              default:
@@ -102,15 +101,14 @@ index aadd6550a5892e403f7b0bbef008461c1566a1bb..0d392980a3154b1eadf1438b81ebf648
 -                                .append(Component.text(DOWNLOAD_PAGE, NamedTextColor.GOLD)
 -                                        .hoverEvent(Component.text("Click to open", NamedTextColor.WHITE))
 -                                        .clickEvent(ClickEvent.openUrl(DOWNLOAD_PAGE))));
-+                return Component.text("You are " + distance + " version(s) behind", NamedTextColor.YELLOW); // Bamboo
-         }
-     }
- 
+-        }
+-    }
+-
 -    private static int fetchDistanceFromSiteApi(int jenkinsBuild, @Nullable String siteApiVersion) {
 -        if (siteApiVersion == null) { return -1; }
 -        try {
 -            try (BufferedReader reader = Resources.asCharSource(
--                new URL("https://api.pl3x.net/v2/purpur/" + siteApiVersion), // Purpur
+-                new URL("https://api.purpurmc.org/v2/purpur/" + siteApiVersion), // Purpur
 -                Charsets.UTF_8
 -            ).openBufferedStream()) {
 -                JsonObject json = new Gson().fromJson(reader, JsonObject.class);
@@ -123,30 +121,10 @@ index aadd6550a5892e403f7b0bbef008461c1566a1bb..0d392980a3154b1eadf1438b81ebf648
 -        } catch (IOException e) {
 -            e.printStackTrace();
 -            return -1;
--        }
--    }
-+//    private static int fetchDistanceFromSiteApi(int jenkinsBuild, @Nullable String siteApiVersion) {
-+//        if (siteApiVersion == null) { return -1; }
-+//        try {
-+//            try (BufferedReader reader = Resources.asCharSource(
-+//                new URL("https://api.pl3x.net/v2/purpur/" + siteApiVersion), // Purpur
-+//                Charsets.UTF_8
-+//            ).openBufferedStream()) {
-+//                JsonObject json = new Gson().fromJson(reader, JsonObject.class);
-+//                int latest = json.getAsJsonObject("builds").getAsJsonPrimitive("latest").getAsInt(); // Purpur
-+//                return latest - jenkinsBuild;
-+//            } catch (JsonSyntaxException ex) {
-+//                ex.printStackTrace();
-+//                return -1;
-+//            }
-+//        } catch (IOException e) {
-+//            e.printStackTrace();
-+//            return -1;
-+//        }
-+//    }
++                return Component.text("You are " + distance + " version(s) behind", NamedTextColor.YELLOW); // Bamboo
+         }
+     }
  
-     // Contributed by Techcable <Techcable@outlook.com> in GH-65
-     private static int fetchDistanceFromGitHub(@Nonnull String repo, @Nonnull String branch, @Nonnull String hash) {
 diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 index 8c3c68465197fafc14849dc38a572e309931e2a2..f2f1fe6fd1a632943282cfde8e948bed6b3bab1e 100644
 --- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
@@ -161,41 +139,41 @@ index 8c3c68465197fafc14849dc38a572e309931e2a2..f2f1fe6fd1a632943282cfde8e948bed
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index bf747e14837699cbd95819bc2a98cdf4057f0137..c21b01638f8ac57aac1f0c31e5e004d5c2d0d7fb 100644
+index 5d1bd07046af00aea3bde2f1000a4b8a1d8528cb..0c80b7d710ec16843817a32c4e6a6dbfdb1e1659 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1752,7 +1752,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1734,7 +1734,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
--        return net.pl3x.purpur.PurpurConfig.serverModName; // Purpur - Purpur > // Airplane // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
-+        return net.rocryn.bamboo.BambooConfig.brandName; // Bamboo - Bamboo > // Purpur - Purpur > // Airplane // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+-        return org.purpurmc.purpur.PurpurConfig.serverModName; // Purpur - Purpur > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
++        return net.rocryn.bamboo.BambooConfig.brandName; // Bamboo - Bamboo > // Purpur - Purpur > // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
      }
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 171207e4ba1a21143ea1db8b1d3646df50256484..b75b5cd0fb1ec721d039ae11deb12d88a8b68233 100644
+index 00a41213ee1c03fe1835dc8bc3b12ffe5c6bbafe..c665aee9fbd5d70d001b8829d61731cc647e4cd9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -251,7 +251,7 @@ import javax.annotation.Nullable; // Paper
+@@ -253,7 +253,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
--    private final String serverName = "Purpur"; // Paper // Airplane // Purpur
-+    private final String serverName = net.rocryn.bamboo.BambooConfig.brandName; // Paper // Airplane // Purpur // Bamboo
+-    private final String serverName = "Purpur"; // Paper // Purpur
++    private final String serverName = "Bamboo"; // Paper // Purpur // Bamboo
      private final String serverVersion;
      private final String bukkitVersion = Versioning.getBukkitVersion();
      private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
-index e7d740e191c5ac408ba1fa493e9367dd52900a02..d202bc8c4cbe0cd25cd56a16d63e7045c3998873 100644
+index fb87620c742ff7912f5e8ccd2a7930dd605576d9..bfd9cc6e7f80bd6e6d03918426839117332f9288 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 @@ -11,7 +11,7 @@ public final class Versioning {
      public static String getBukkitVersion() {
          String result = "Unknown-Version";
  
--        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/net.pl3x.purpur/purpur-api/pom.properties"); // Airplane // Purpur
-+        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/net.rocryn.bamboo/bamboo-api/pom.properties"); // Airplane // Purpur // Bamboo
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/org.purpurmc.purpur/purpur-api/pom.properties"); // Purpur
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/net.rocryn.bamboo/bamboo-api/pom.properties"); // Purpur // Bamboo
          Properties properties = new Properties();
  
          if (stream != null) {

@@ -5,10 +5,10 @@ Subject: [PATCH] Disable Enderman Teleporting From Spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index 460cb4e77e9e90260596df5af33aa2a6e16ecf86..db94f4d9c5bb0b263359fe3b89a4e177abaf4495 100644
+index 8923274fc04282cf97398b997603f699d92e6699..0a5d28526bcb5b84c9ffa63016c4f606332eb095 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-@@ -293,11 +293,13 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -299,11 +299,13 @@ public class EnderMan extends Monster implements NeutralMob {
      @Override
      protected void customServerAiStep() {
          if (getRider() == null && this.level.isDay() && this.tickCount >= this.targetChangeTime + 600) { // Purpur - no random teleporting
@@ -31,10 +31,10 @@ index 460cb4e77e9e90260596df5af33aa2a6e16ecf86..db94f4d9c5bb0b263359fe3b89a4e177
              return false;
          } else if (getRider() != null) { return super.hurt(source, amount); // Purpur - no teleporting on damage
 +        } else if (!net.rocryn.bamboo.BambooConfig.endermanSpawnerTeleport && this.spawnedViaMobSpawner) { return super.hurt(source, amount); // Bamboo - don't teleport if spawned via spawner
-         } else if (net.pl3x.purpur.PurpurConfig.endermanShortHeight && source == DamageSource.IN_WALL) { return false; // Purpur - no suffocation damage if short height
+         } else if (org.purpurmc.purpur.PurpurConfig.endermanShortHeight && source == DamageSource.IN_WALL) { return false; // Purpur - no suffocation damage if short height
          } else if (source instanceof IndirectEntityDamageSource && !(this.level.purpurConfig.endermanIgnoreProjectiles && source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile)) { // Purpur
-             if (this.tryEscape(com.destroystokyo.paper.event.entity.EndermanEscapeEvent.Reason.INDIRECT)) { // Paper start
-@@ -625,14 +628,16 @@ public class EnderMan extends Monster implements NeutralMob {
+             Entity entity = source.getDirectEntity();
+@@ -645,14 +648,16 @@ public class EnderMan extends Monster implements NeutralMob {
                  }
              } else {
                  if (this.target != null && !this.enderman.isPassenger()) {
@@ -48,12 +48,12 @@ index 460cb4e77e9e90260596df5af33aa2a6e16ecf86..db94f4d9c5bb0b263359fe3b89a4e177
 +                            }
 +
 +                            this.teleportTime = 0;
-+                        } else if (this.target.distanceToSqr((Entity) this.enderman) > 256.0D && this.teleportTime++ >= 30 && this.enderman.teleportTowards((Entity) this.target)) {
++                        } else if (this.target.distanceToSqr((Entity) this.enderman) > 256.0D && this.teleportTime++ >= this.adjustedTickDelay(30) && this.enderman.teleportTowards(this.target)) {
 +                            this.teleportTime = 0;
                          }
 -
 -                        this.teleportTime = 0;
--                    } else if (this.target.distanceToSqr((Entity) this.enderman) > 256.0D && this.teleportTime++ >= 30 && this.enderman.teleportTowards((Entity) this.target)) {
+-                    } else if (this.target.distanceToSqr((Entity) this.enderman) > 256.0D && this.teleportTime++ >= this.adjustedTickDelay(30) && this.enderman.teleportTowards(this.target)) {
 -                        this.teleportTime = 0;
                      }
                  }

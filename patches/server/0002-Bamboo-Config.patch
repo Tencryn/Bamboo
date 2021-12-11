@@ -5,42 +5,27 @@ Subject: [PATCH] Bamboo Config
 
 
 diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
-index c5803537b23d44bad5f447bd2f98d54226d3e80e..282b6ca41a8483faffd45404151295727595409b 100644
+index 52197656e46fd159240a936fe13bfb27f2b4e9a7..bfde30bf7e0be01847bfd31744fc450810ecc882 100644
 --- a/src/main/java/co/aikar/timings/TimingsExport.java
 +++ b/src/main/java/co/aikar/timings/TimingsExport.java
-@@ -232,7 +232,8 @@ public class TimingsExport extends Thread {
+@@ -231,7 +231,8 @@ public class TimingsExport extends Thread {
+             pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null)),
              pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
-             pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null)), // Airplane
-             pair("airplane", mapAsJSON(gg.airplane.AirplaneConfig.getConfigCopy(), null)), // Airplane
+             pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null)),
 -            pair("purpur", mapAsJSON(Bukkit.spigot().getPurpurConfig(), null))
 +            pair("purpur", mapAsJSON(Bukkit.spigot().getPurpurConfig(), null)),
 +            pair("bamboo", mapAsJSON(Bukkit.spigot().getBambooConfig(), null)) // Bamboo
              // Purpur end
          ));
  
-diff --git a/src/main/java/gg/airplane/compat/ServerConfigurations.java b/src/main/java/gg/airplane/compat/ServerConfigurations.java
-index f9a71ff3edd7e7b6cda680e5a156373b5aa813c2..85c167c93e84da760eae368cce28e61682d4c048 100644
---- a/src/main/java/gg/airplane/compat/ServerConfigurations.java
-+++ b/src/main/java/gg/airplane/compat/ServerConfigurations.java
-@@ -24,7 +24,9 @@ public class ServerConfigurations {
-       "bukkit.yml",
-       "spigot.yml",
-       "paper.yml",
--      "airplane.yml"
-+      "airplane.yml",
-+      "purpur.yml", // Bamboo
-+      "bamboo.yml" // Bamboo
-     };
- 
-     public static Map<String, String> getCleanCopies() throws IOException {
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index d5c61053f6af91aa5d0894750ab86372a91c9a73..e425439b05405d58b4d088b5316489fb88092566 100644
+index 9412a238aa3538bf958cf3b5ce2be5a9beead90f..eb829c0cab3c685f2d33946f64d8d15043891af0 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -245,6 +245,14 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -241,6 +241,14 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         io.papermc.paper.util.ObfHelper.INSTANCE.getClass(); // load mappings for stacktrace deobf and etc.
+         io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
          // Paper end
-         gg.airplane.AirplaneConfig.load(); // Airplane - config
-         gg.airplane.commands.AirplaneCommands.init(); // Airplane - command
 +        // Bamboo start
 +        try {
 +            net.rocryn.bamboo.BambooConfig.init((java.io.File) options.valueOf("bamboo-settings"));
@@ -207,18 +192,18 @@ index 0000000000000000000000000000000000000000..61187b99639193ecf9b321286eed3e96
 +    private static void sheepGriefGrass() { sheepGriefGrass = getBoolean("animals.sheep.grief-grass", sheepGriefGrass); }
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b75b5cd0fb1ec721d039ae11deb12d88a8b68233..85f8921455ad736cc7055c8fe1165728a8205de8 100644
+index c665aee9fbd5d70d001b8829d61731cc647e4cd9..9e2193500d5f09dc443f7b366206760e2022494f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -925,6 +925,7 @@ public final class CraftServer implements Server {
+@@ -932,6 +932,7 @@ public final class CraftServer implements Server {
          org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
          com.destroystokyo.paper.PaperConfig.init((File) console.options.valueOf("paper-settings")); // Paper
-         net.pl3x.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur
+         org.purpurmc.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur
 +        net.rocryn.bamboo.BambooConfig.init((File) console.options.valueOf("bamboo-settings")); // Bamboo
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2600,6 +2601,11 @@ public final class CraftServer implements Server {
+@@ -2677,6 +2678,11 @@ public final class CraftServer implements Server {
          }
          // Purpur end
  
@@ -231,10 +216,10 @@ index b75b5cd0fb1ec721d039ae11deb12d88a8b68233..85f8921455ad736cc7055c8fe1165728
          public void restart() {
              org.spigotmc.RestartCommand.restart();
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index 56674053351962a75b2731dde137dbbc0c70dbde..94d4a283a4e2efaf9419d15c994abdf7f6648f50 100644
+index 6f14a1b26e92d0170538ed60c6a651a031e7209e..13a7eb23518b3ee1a6ccb792dc2d40f0547322c8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
-@@ -155,6 +155,14 @@ public class Main {
+@@ -161,6 +161,14 @@ public class Main {
                      .describedAs("Yml file");
                  // Purpur end
  

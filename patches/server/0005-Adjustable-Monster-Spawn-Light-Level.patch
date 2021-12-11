@@ -5,10 +5,10 @@ Subject: [PATCH] Adjustable Monster Spawn Light Level
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Monster.java b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-index e94618f4c1552bb1ef20067aa3201c6574b5c307..92c40dc662eb601b5dcddb0d19244e2c83481d0a 100644
+index 9c38fdb23853ebdca7b8d904760a395869b4dd49..62e1def0531acae3070ab053d3aa2f4d7c9d5bd9 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Monster.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Monster.java
-@@ -23,6 +23,7 @@ import net.minecraft.world.level.LevelAccessor;
+@@ -24,6 +24,7 @@ import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.LightLayer;
  import net.minecraft.world.level.ServerLevelAccessor;
@@ -16,13 +16,15 @@ index e94618f4c1552bb1ef20067aa3201c6574b5c307..92c40dc662eb601b5dcddb0d19244e2c
  
  public abstract class Monster extends PathfinderMob implements Enemy {
      public org.bukkit.craftbukkit.entity.CraftMonster getBukkitMonster() { return (org.bukkit.craftbukkit.entity.CraftMonster) super.getBukkitEntity(); } // Paper
-@@ -93,12 +94,19 @@ public abstract class Monster extends PathfinderMob implements Enemy {
+@@ -94,14 +95,21 @@ public abstract class Monster extends PathfinderMob implements Enemy {
              return false;
          }
          // Purpur end
 +
 +        // Bamboo start
          if (world.getBrightness(LightLayer.SKY, pos) > random.nextInt(32)) {
+             return false;
+         } else if (world.getBrightness(LightLayer.BLOCK, pos) > 0) {
              return false;
 -        } else {
 -            int i = world.getLevel().isThundering() ? world.getMaxLocalRawBrightness(pos, 10) : world.getMaxLocalRawBrightness(pos);
