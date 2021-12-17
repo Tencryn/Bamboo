@@ -165,7 +165,7 @@ index 959cb69b37921c62a9012642acaf2d0295915e1f..8ae16772122431bb5acc371acc205d16
      private final String bukkitVersion = Versioning.getBukkitVersion();
      private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
-index fb87620c742ff7912f5e8ccd2a7930dd605576d9..bfd9cc6e7f80bd6e6d03918426839117332f9288 100644
+index fb87620c742ff7912f5e8ccd2a7930dd605576d9..16d8417c29aeee9112811c6776cdec07708aeaf5 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 @@ -11,7 +11,7 @@ public final class Versioning {
@@ -173,7 +173,7 @@ index fb87620c742ff7912f5e8ccd2a7930dd605576d9..bfd9cc6e7f80bd6e6d03918426839117
          String result = "Unknown-Version";
  
 -        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/org.purpurmc.purpur/purpur-api/pom.properties"); // Purpur
-+        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/net.rocryn.bamboo/bamboo-api/pom.properties"); // Purpur // Bamboo
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/net.rocryn.bamboo/Bamboo-API/pom.properties"); // Purpur // Bamboo
          Properties properties = new Properties();
  
          if (stream != null) {
