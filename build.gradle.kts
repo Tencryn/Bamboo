@@ -62,7 +62,7 @@ paperweight {
     decompileRepo.set("https://files.minecraftforge.net/maven/")
 
     useStandardUpstream("Purpur") {
-        url.set(github("pl3xgaming", "Purpur"))
+        url.set(github("PurpurMC", "Purpur"))
         ref.set(providers.gradleProperty("purpurRef"))
 
         withStandardPatcher {
