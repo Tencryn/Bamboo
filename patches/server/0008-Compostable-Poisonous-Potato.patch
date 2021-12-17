@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tencryn <41876297+Tencryn@users.noreply.github.com>
+Date: Fri, 17 Dec 2021 22:31:42 +0000
+Subject: [PATCH] Compostable Poisonous Potato
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/ComposterBlock.java b/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
+index 16598ca0fd953b6af98dfcdb6716e2e128d14bab..d262bd50047b2c47171e05c267380a2464063a77 100644
+--- a/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/ComposterBlock.java
+@@ -67,6 +67,7 @@ public class ComposterBlock extends Block implements WorldlyContainerHolder {
+         float f3 = 0.85F;
+         float f4 = 1.0F;
+ 
++        ComposterBlock.add(0.1F, Items.POISONOUS_POTATO);
+         ComposterBlock.add(0.3F, Items.JUNGLE_LEAVES);
+         ComposterBlock.add(0.3F, Items.OAK_LEAVES);
+         ComposterBlock.add(0.3F, Items.SPRUCE_LEAVES);
