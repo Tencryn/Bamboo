@@ -81,3 +81,15 @@ index f5fd6e0fd67c1b760000c2e75ce09d1c680b4cf6..ad538db7371598016b340e10fb3ef46d
  
          if (flag1) {
              setChanged(world, pos, state);
+diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+index fab62b8ff10eaa75f4b5c8032aac69f979950e98..6aeede351a536fffe3f4ab3e55f0a5f5100b728a 100644
+--- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
++++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+@@ -133,4 +133,7 @@ public class BambooConfig {
+     private static void brandName() {
+         brandName = getString("brand-name", brandName);
+     }
++
++    public static Boolean preserveFuel = false;
++    private static void preserveFuel() { preserveFuel = getBoolean("blocks.furnaces.preserve-fuel", preserveFuel); }
+ }

@@ -62,3 +62,15 @@ index 8a4080a77bd5b73ac812e3ae67c6f21dcd270215..66496c00900883549032cd72bcb5a8cb
  
                      this.mob.ate();
                      this.mob.gameEvent(GameEvent.EAT, this.mob.eyeBlockPosition());
+diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+index 6aeede351a536fffe3f4ab3e55f0a5f5100b728a..17d253f2859f733b66efff43a1f455298cccc13d 100644
+--- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
++++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+@@ -136,4 +136,7 @@ public class BambooConfig {
+ 
+     public static Boolean preserveFuel = false;
+     private static void preserveFuel() { preserveFuel = getBoolean("blocks.furnaces.preserve-fuel", preserveFuel); }
++
++    public static Boolean sheepGriefGrass = true;
++    private static void sheepGriefGrass() { sheepGriefGrass = getBoolean("mobs.passive.sheep.grief-grass", sheepGriefGrass); }
+ }

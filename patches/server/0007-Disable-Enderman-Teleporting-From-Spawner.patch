@@ -5,10 +5,10 @@ Subject: [PATCH] Disable Enderman Teleporting From Spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index 8923274fc04282cf97398b997603f699d92e6699..0a5d28526bcb5b84c9ffa63016c4f606332eb095 100644
+index 4e6b8f6afcbf4e84759a5ec07930717fb363613f..a8fcb8713c1b9e83551f854b4656aa6ab107644d 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-@@ -299,11 +299,13 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -304,11 +304,13 @@ public class EnderMan extends Monster implements NeutralMob {
      @Override
      protected void customServerAiStep() {
          if (getRider() == null && this.level.isDay() && this.tickCount >= this.targetChangeTime + 600) { // Purpur - no random teleporting
@@ -26,7 +26,7 @@ index 8923274fc04282cf97398b997603f699d92e6699..0a5d28526bcb5b84c9ffa63016c4f606
              }
          }
  
-@@ -399,6 +401,7 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -404,6 +406,7 @@ public class EnderMan extends Monster implements NeutralMob {
          if (this.isInvulnerableTo(source)) {
              return false;
          } else if (getRider() != null) { return super.hurt(source, amount); // Purpur - no teleporting on damage
@@ -34,7 +34,7 @@ index 8923274fc04282cf97398b997603f699d92e6699..0a5d28526bcb5b84c9ffa63016c4f606
          } else if (org.purpurmc.purpur.PurpurConfig.endermanShortHeight && source == DamageSource.IN_WALL) { return false; // Purpur - no suffocation damage if short height
          } else if (source instanceof IndirectEntityDamageSource && !(this.level.purpurConfig.endermanIgnoreProjectiles && source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile)) { // Purpur
              Entity entity = source.getDirectEntity();
-@@ -645,14 +648,16 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -650,14 +653,16 @@ public class EnderMan extends Monster implements NeutralMob {
                  }
              } else {
                  if (this.target != null && !this.enderman.isPassenger()) {
@@ -58,3 +58,15 @@ index 8923274fc04282cf97398b997603f699d92e6699..0a5d28526bcb5b84c9ffa63016c4f606
                      }
                  }
  
+diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+index 17d253f2859f733b66efff43a1f455298cccc13d..2c8ca798ec4b93e2c4170ee347675bdd93bc31ae 100644
+--- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
++++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+@@ -139,4 +139,7 @@ public class BambooConfig {
+ 
+     public static Boolean sheepGriefGrass = true;
+     private static void sheepGriefGrass() { sheepGriefGrass = getBoolean("mobs.passive.sheep.grief-grass", sheepGriefGrass); }
++
++    public static Boolean endermanSpawnerTeleport = true;
++    private static void endermanSpawnerTeleport() { endermanSpawnerTeleport = getBoolean("mobs.hostile.enderman.teleport-if-spawned-via-spawner", endermanSpawnerTeleport); }
+ }
