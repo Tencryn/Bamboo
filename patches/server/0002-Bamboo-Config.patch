@@ -5,13 +5,13 @@ Subject: [PATCH] Bamboo Config
 
 
 diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
-index 52197656e46fd159240a936fe13bfb27f2b4e9a7..bfde30bf7e0be01847bfd31744fc450810ecc882 100644
+index 0f4b41fd7037f380f759a93f9ef70b4860816ad1..beb63192fc532d70c25a88181333c88cbb132d2d 100644
 --- a/src/main/java/co/aikar/timings/TimingsExport.java
 +++ b/src/main/java/co/aikar/timings/TimingsExport.java
 @@ -231,7 +231,8 @@ public class TimingsExport extends Thread {
-             pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null)),
              pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
              pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null)),
+             pair("pufferfish", mapAsJSON(gg.pufferfish.pufferfish.PufferfishConfig.getConfigCopy(), null)), // Pufferfish
 -            pair("purpur", mapAsJSON(Bukkit.spigot().getPurpurConfig(), null))
 +            pair("purpur", mapAsJSON(Bukkit.spigot().getPurpurConfig(), null)),
 +            pair("bamboo", mapAsJSON(Bukkit.spigot().getBambooConfig(), null)) // Bamboo
@@ -19,13 +19,13 @@ index 52197656e46fd159240a936fe13bfb27f2b4e9a7..bfde30bf7e0be01847bfd31744fc4508
          ));
  
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 9412a238aa3538bf958cf3b5ce2be5a9beead90f..eb829c0cab3c685f2d33946f64d8d15043891af0 100644
+index 799955b4439ba7739dc011183aad25b39b526566..a37ab47fb8df67d5a19e81fa3aabbc0dd3d74687 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -241,6 +241,14 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
-         io.papermc.paper.util.ObfHelper.INSTANCE.getClass(); // load mappings for stacktrace deobf and etc.
-         io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
+@@ -243,6 +243,14 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
          // Paper end
+         gg.pufferfish.pufferfish.PufferfishConfig.load(); // Pufferfish
+         gg.pufferfish.pufferfish.PufferfishCommand.init(); // Pufferfish
 +        // Bamboo start
 +        try {
 +            net.rocryn.bamboo.BambooConfig.init((java.io.File) options.valueOf("bamboo-settings"));
@@ -180,7 +180,7 @@ index 0000000000000000000000000000000000000000..fab62b8ff10eaa75f4b5c8032aac69f9
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 84a49d0088b1e5a2eb3234c4f23961083d57ad89..44d54db72d6bd35c8e498956ad3c5b0904a7b211 100644
+index 9e2a74c3aca9525f49036bbd9e7c45c0ec5996c6..c1c5eec39e342c2184c15b55028508af48ed8ac3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -953,6 +953,7 @@ public final class CraftServer implements Server {
@@ -191,7 +191,7 @@ index 84a49d0088b1e5a2eb3234c4f23961083d57ad89..44d54db72d6bd35c8e498956ad3c5b09
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2691,6 +2692,11 @@ public final class CraftServer implements Server {
+@@ -2696,6 +2697,11 @@ public final class CraftServer implements Server {
          }
          // Purpur end
  

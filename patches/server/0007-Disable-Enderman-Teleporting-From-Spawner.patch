@@ -5,7 +5,7 @@ Subject: [PATCH] Disable Enderman Teleporting From Spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index 4e6b8f6afcbf4e84759a5ec07930717fb363613f..a8fcb8713c1b9e83551f854b4656aa6ab107644d 100644
+index 8d795d1bc125973caf0818224ea359c3cd3388a8..b973e03d547d03114089bff2fcdd5428e87d349b 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 @@ -304,11 +304,13 @@ public class EnderMan extends Monster implements NeutralMob {
@@ -26,7 +26,7 @@ index 4e6b8f6afcbf4e84759a5ec07930717fb363613f..a8fcb8713c1b9e83551f854b4656aa6a
              }
          }
  
-@@ -404,6 +406,7 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -410,6 +412,7 @@ public class EnderMan extends Monster implements NeutralMob {
          if (this.isInvulnerableTo(source)) {
              return false;
          } else if (getRider() != null) { return super.hurt(source, amount); // Purpur - no teleporting on damage
@@ -34,7 +34,7 @@ index 4e6b8f6afcbf4e84759a5ec07930717fb363613f..a8fcb8713c1b9e83551f854b4656aa6a
          } else if (org.purpurmc.purpur.PurpurConfig.endermanShortHeight && source == DamageSource.IN_WALL) { return false; // Purpur - no suffocation damage if short height
          } else if (source instanceof IndirectEntityDamageSource && !(this.level.purpurConfig.endermanIgnoreProjectiles && source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile)) { // Purpur
              Entity entity = source.getDirectEntity();
-@@ -650,14 +653,16 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -656,14 +659,16 @@ public class EnderMan extends Monster implements NeutralMob {
                  }
              } else {
                  if (this.target != null && !this.enderman.isPassenger()) {

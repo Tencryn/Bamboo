@@ -5,7 +5,7 @@ Subject: [PATCH] Nerf Stuck Villagers
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-index afbb2acd27416c801af3d718850b82a170734cd3..26140ffe726bf8754671ce31a1c51c5ea607a8e7 100644
+index aa6ea8a81421ff0046bd926dedcda50f9ee02d60..37fbf5238298b4c83a66d09f008296b65dedddec 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 @@ -18,6 +18,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -16,7 +16,7 @@ index afbb2acd27416c801af3d718850b82a170734cd3..26140ffe726bf8754671ce31a1c51c5e
  import net.minecraft.world.level.pathfinder.Path;
  
  public class AcquirePoi extends Behavior<PathfinderMob> {
-@@ -83,9 +84,14 @@ public class AcquirePoi extends Behavior<PathfinderMob> {
+@@ -84,9 +85,14 @@ public class AcquirePoi extends Behavior<PathfinderMob> {
                  return true;
              }
          };
@@ -76,7 +76,7 @@ index 1763764662e061d1f8de74b65de7fb5cc1caac5c..90f7c82c28cc887127fc57b08319d93f
          return ImmutableList.of(Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(InteractWith.of(EntityType.VILLAGER, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 2), Pair.of(new InteractWith<>(EntityType.VILLAGER, 8, AgeableMob::canBreed, AgeableMob::canBreed, MemoryModuleType.BREED_TARGET, speed, 2), 1), Pair.of(InteractWith.of(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 1), Pair.of(new VillageBoundRandomStroll(speed), 1), Pair.of(new SetWalkTargetFromLookTarget(speed, 2), 1), Pair.of(new JumpOnBed(speed), 1), Pair.of(new DoNothing(30, 60), 1)))), Pair.of(3, new GiveGiftToHero(100)), Pair.of(3, new SetLookAndInteract(EntityType.PLAYER, 4)), Pair.of(3, new ShowTradesToPlayer(400, 1600)), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new TradeWithVillager(), 1)))), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.BREED_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new VillagerMakeLove(), 1)))), getFullLookBehavior(), Pair.of(99, new UpdateActivityFromSchedule()));
      }
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index efb98dd788b5b8ce51c92847c585e5ee9c0465f3..df79a0bf932b7f6a4fbe244934ee82e9ac88c9d7 100644
+index 0141d4d2dfaacfbce174e82e2d7c1a9419c64982..d5fc8b8fc498e50701b2198f83c86a35d64924e7 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -138,6 +138,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
@@ -85,9 +85,9 @@ index efb98dd788b5b8ce51c92847c585e5ee9c0465f3..df79a0bf932b7f6a4fbe244934ee82e9
      private final int brainTickOffset; // Purpur
 +    private boolean nerfed = false; // Bamboo
  
-     public Villager(EntityType<? extends Villager> entityType, Level world) {
-         this(entityType, world, VillagerType.PLAINS);
-@@ -191,6 +192,36 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+     public long nextGolemPanic = -1; // Pufferfish
+ 
+@@ -193,6 +194,36 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      }
      // Purpur end
  
@@ -124,7 +124,7 @@ index efb98dd788b5b8ce51c92847c585e5ee9c0465f3..df79a0bf932b7f6a4fbe244934ee82e9
      @Override
      public Brain<Villager> getBrain() {
          return (Brain<Villager>) super.getBrain(); // CraftBukkit - decompile error
-@@ -228,14 +259,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -230,14 +261,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
              brain.addActivityWithConditions(Activity.WORK, VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))); // Purpur
          }
  
@@ -153,20 +153,20 @@ index efb98dd788b5b8ce51c92847c585e5ee9c0465f3..df79a0bf932b7f6a4fbe244934ee82e9
          brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
          brain.setDefaultActivity(Activity.IDLE);
          brain.setActiveActivityIfPossible(Activity.IDLE);
-@@ -285,6 +322,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
-     protected void customServerAiStep() { mobTick(false); }
-     protected void mobTick(boolean inactive) {
+@@ -290,6 +327,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          this.level.getProfiler().push("villagerBrain");
-+        // Bamboo start
-+        if (this.nerfed != this.isNerfed()) {
-+            if (this.level instanceof ServerLevel) {
-+                this.refreshBrain((ServerLevel) this.level);
+         // Pufferfish start
+         if (!inactive) {
++            // Bamboo start
++            if (this.nerfed != this.isNerfed()) {
++                if (this.level instanceof ServerLevel) {
++                    this.refreshBrain((ServerLevel) this.level);
++                }
 +            }
-+        }
-+        // Bamboo end
-         // Purpur start
-         boolean tick = (level.getGameTime() + brainTickOffset) % level.purpurConfig.villagerBrainTicks == 0;
-         if (((ServerLevel) level).getServer().lagging ? tick : level.purpurConfig.villagerUseBrainTicksOnlyWhenLagging || tick)
++            // Bamboo end
+             // Purpur start
+             boolean tick = (level.getGameTime() + brainTickOffset) % level.purpurConfig.villagerBrainTicks == 0;
+             if (((ServerLevel) level).getServer().lagging ? tick : level.purpurConfig.villagerUseBrainTicksOnlyWhenLagging || tick)
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
 index 2c8ca798ec4b93e2c4170ee347675bdd93bc31ae..756825f65117a1931a0f68b122f30a9602efecaf 100644
 --- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
