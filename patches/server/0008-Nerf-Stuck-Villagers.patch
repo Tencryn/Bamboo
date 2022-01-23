@@ -76,7 +76,7 @@ index 1763764662e061d1f8de74b65de7fb5cc1caac5c..90f7c82c28cc887127fc57b08319d93f
          return ImmutableList.of(Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(InteractWith.of(EntityType.VILLAGER, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 2), Pair.of(new InteractWith<>(EntityType.VILLAGER, 8, AgeableMob::canBreed, AgeableMob::canBreed, MemoryModuleType.BREED_TARGET, speed, 2), 1), Pair.of(InteractWith.of(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 1), Pair.of(new VillageBoundRandomStroll(speed), 1), Pair.of(new SetWalkTargetFromLookTarget(speed, 2), 1), Pair.of(new JumpOnBed(speed), 1), Pair.of(new DoNothing(30, 60), 1)))), Pair.of(3, new GiveGiftToHero(100)), Pair.of(3, new SetLookAndInteract(EntityType.PLAYER, 4)), Pair.of(3, new ShowTradesToPlayer(400, 1600)), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new TradeWithVillager(), 1)))), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.BREED_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new VillagerMakeLove(), 1)))), getFullLookBehavior(), Pair.of(99, new UpdateActivityFromSchedule()));
      }
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 0141d4d2dfaacfbce174e82e2d7c1a9419c64982..d5fc8b8fc498e50701b2198f83c86a35d64924e7 100644
+index b9f228d660b2279284e64fc3bbfa90fc7d2d20b0..2f5dd6f63c3e04f5b93a1b6fb0728587ad0b8107 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -138,6 +138,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
@@ -87,7 +87,7 @@ index 0141d4d2dfaacfbce174e82e2d7c1a9419c64982..d5fc8b8fc498e50701b2198f83c86a35
  
      public long nextGolemPanic = -1; // Pufferfish
  
-@@ -193,6 +194,36 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -198,6 +199,36 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      }
      // Purpur end
  
@@ -124,7 +124,7 @@ index 0141d4d2dfaacfbce174e82e2d7c1a9419c64982..d5fc8b8fc498e50701b2198f83c86a35
      @Override
      public Brain<Villager> getBrain() {
          return (Brain<Villager>) super.getBrain(); // CraftBukkit - decompile error
-@@ -230,14 +261,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -235,14 +266,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
              brain.addActivityWithConditions(Activity.WORK, VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))); // Purpur
          }
  
@@ -153,7 +153,7 @@ index 0141d4d2dfaacfbce174e82e2d7c1a9419c64982..d5fc8b8fc498e50701b2198f83c86a35
          brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
          brain.setDefaultActivity(Activity.IDLE);
          brain.setActiveActivityIfPossible(Activity.IDLE);
-@@ -290,6 +327,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -295,6 +332,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          this.level.getProfiler().push("villagerBrain");
          // Pufferfish start
          if (!inactive) {

@@ -4,14 +4,91 @@ Date: Sat, 27 Nov 2021 21:04:47 +0000
 Subject: [PATCH] Disable Enderman Teleporting From Spawner
 
 
+diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+index fba5dbdb7bcbb55400ef18342c9b54612972a718..600f9e3d28925fdc7d2a8907b3c3087d00c0762f 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
++++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
+ public class PaperVersionFetcher implements VersionFetcher {
+     private static final java.util.regex.Pattern VER_PATTERN = java.util.regex.Pattern.compile("^([0-9\\.]*)\\-.*R"); // R is an anchor, will always give '-R' at end
+     // Purpur start
+-    private static final String DOWNLOAD_PAGE = "https://purpurmc.org/downloads";
++    // private static final String DOWNLOAD_PAGE = "https://purpurmc.org/downloads"; // Bamboo
+     private static int distance = -2; public int distance() { return distance; }
+     // Purpur end
+     private static @Nullable String mcVer;
+@@ -33,8 +33,8 @@ public class PaperVersionFetcher implements VersionFetcher {
+     @Nonnull
+     @Override
+     public Component getVersionMessage(@Nonnull String serverVersion) {
+-        String[] parts = serverVersion.substring("git-Purpur-".length()).split("[-\\s]"); // Purpur
+-        final Component updateMessage = getUpdateStatusMessage("PurpurMC/Purpur", "ver/" + getMinecraftVersion(), parts[0]); // Purpur
++        String[] parts = serverVersion.substring("git-Bamboo-".length()).split("[-\\s]"); // Purpur // Bamboo
++        final Component updateMessage = getUpdateStatusMessage("Tencryn/Bamboo", "ver/" + getMinecraftVersion(), parts[0]); // Purpur // Bamboo
+         final Component history = getHistory();
+ 
+         return history != null ? Component.join(net.kyori.adventure.text.JoinConfiguration.separator(Component.newline()), history, updateMessage) : updateMessage; // Purpur
+@@ -57,14 +57,10 @@ public class PaperVersionFetcher implements VersionFetcher {
+     }
+ 
+     private static Component getUpdateStatusMessage(@Nonnull String repo, @Nonnull String branch, @Nonnull String versionInfo) {
+-        //int distance; // Purpur - use field
+-        try {
+-            int jenkinsBuild = Integer.parseInt(versionInfo);
+-            distance = fetchDistanceFromSiteApi(jenkinsBuild, getMinecraftVersion());
+-        } catch (NumberFormatException ignored) {
+-            versionInfo = versionInfo.replace("\"", "");
+-            distance = fetchDistanceFromGitHub(repo, branch, versionInfo);
+-        }
++        // Bamboo start
++        versionInfo = versionInfo.replace("\"", "");
++        distance = fetchDistanceFromGitHub(repo, branch, versionInfo);
++        // Bamboo end
+ 
+         switch (distance) {
+             case -1:
+@@ -74,32 +70,7 @@ public class PaperVersionFetcher implements VersionFetcher {
+             case -2:
+                 return Component.text("* Unknown version", NamedTextColor.RED); // Purpur
+             default:
+-                return Component.text("* You are " + distance + " version(s) behind", NamedTextColor.YELLOW) // Purpur
+-                        .append(Component.newline())
+-                        .append(Component.text("Download the new version at: ")
+-                                .append(Component.text(DOWNLOAD_PAGE, NamedTextColor.GOLD)
+-                                        .hoverEvent(Component.text("Click to open", NamedTextColor.WHITE))
+-                                        .clickEvent(ClickEvent.openUrl(DOWNLOAD_PAGE))));
+-        }
+-    }
+-
+-    private static int fetchDistanceFromSiteApi(int jenkinsBuild, @Nullable String siteApiVersion) {
+-        if (siteApiVersion == null) { return -1; }
+-        try {
+-            try (BufferedReader reader = Resources.asCharSource(
+-                new URL("https://api.purpurmc.org/v2/purpur/" + siteApiVersion), // Purpur
+-                Charsets.UTF_8
+-            ).openBufferedStream()) {
+-                JsonObject json = new Gson().fromJson(reader, JsonObject.class);
+-                int latest = json.getAsJsonObject("builds").getAsJsonPrimitive("latest").getAsInt(); // Purpur
+-                return latest - jenkinsBuild;
+-            } catch (JsonSyntaxException ex) {
+-                ex.printStackTrace();
+-                return -1;
+-            }
+-        } catch (IOException e) {
+-            e.printStackTrace();
+-            return -1;
++                return Component.text("* You are " + distance + " version(s) behind", NamedTextColor.YELLOW); // Bamboo
+         }
+     }
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index 8d795d1bc125973caf0818224ea359c3cd3388a8..b973e03d547d03114089bff2fcdd5428e87d349b 100644
+index e99751a15f0fef67525b8b392c3893561d240b2b..5ddf6ade11a5785e0283d007ab1ff2d23e1d9389 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-@@ -304,11 +304,13 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -309,11 +309,13 @@ public class EnderMan extends Monster implements NeutralMob {
      @Override
      protected void customServerAiStep() {
-         if (getRider() == null && this.level.isDay() && this.tickCount >= this.targetChangeTime + 600) { // Purpur - no random teleporting
+         if ((getRider() == null || !this.isControllable()) && this.level.isDay() && this.tickCount >= this.targetChangeTime + 600) { // Purpur - no random teleporting
 -            float f = this.getBrightness();
 +            if (net.rocryn.bamboo.BambooConfig.endermanSpawnerTeleport || !this.spawnedViaMobSpawner) { // Bamboo - don't teleport if spawned via spawner
 +                float f = this.getBrightness();
@@ -26,15 +103,15 @@ index 8d795d1bc125973caf0818224ea359c3cd3388a8..b973e03d547d03114089bff2fcdd5428
              }
          }
  
-@@ -410,6 +412,7 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -415,6 +417,7 @@ public class EnderMan extends Monster implements NeutralMob {
          if (this.isInvulnerableTo(source)) {
              return false;
-         } else if (getRider() != null) { return super.hurt(source, amount); // Purpur - no teleporting on damage
+         } else if (getRider() != null && this.isControllable()) { return super.hurt(source, amount); // Purpur - no teleporting on damage
 +        } else if (!net.rocryn.bamboo.BambooConfig.endermanSpawnerTeleport && this.spawnedViaMobSpawner) { return super.hurt(source, amount); // Bamboo - don't teleport if spawned via spawner
          } else if (org.purpurmc.purpur.PurpurConfig.endermanShortHeight && source == DamageSource.IN_WALL) { return false; // Purpur - no suffocation damage if short height
          } else if (source instanceof IndirectEntityDamageSource && !(this.level.purpurConfig.endermanIgnoreProjectiles && source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile)) { // Purpur
              Entity entity = source.getDirectEntity();
-@@ -656,14 +659,16 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -661,14 +664,16 @@ public class EnderMan extends Monster implements NeutralMob {
                  }
              } else {
                  if (this.target != null && !this.enderman.isPassenger()) {
