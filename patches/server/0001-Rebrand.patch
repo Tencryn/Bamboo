@@ -63,7 +63,7 @@ index 8c3c68465197fafc14849dc38a572e309931e2a2..f2f1fe6fd1a632943282cfde8e948bed
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4502e3c1382041ed3896233d2b04e7feb78944eb..7d7fb3d40c1fa6b5f71acd2ad60214eca60e9fdf 100644
+index 961db18299d6316069c9550dcd01399577939c82..8a415a169b25d1c4895e4f8ef1650e04e6bd0ac4 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -313,7 +313,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -75,7 +75,7 @@ index 4502e3c1382041ed3896233d2b04e7feb78944eb..7d7fb3d40c1fa6b5f71acd2ad60214ec
      public gg.pufferfish.pufferfish.util.AsyncExecutor mobSpawnExecutor = new gg.pufferfish.pufferfish.util.AsyncExecutor("MobSpawning", () -> true); // Pufferfish - optimize mob spawning
  
      public static <S extends MinecraftServer> S spin(Function<Thread, S> serverFactory) {
-@@ -1737,7 +1737,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1741,7 +1741,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {

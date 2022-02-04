@@ -82,7 +82,7 @@ index fba5dbdb7bcbb55400ef18342c9b54612972a718..600f9e3d28925fdc7d2a8907b3c3087d
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index e99751a15f0fef67525b8b392c3893561d240b2b..5ddf6ade11a5785e0283d007ab1ff2d23e1d9389 100644
+index 8fd2721aaaee8148798f49fdc5b239dcdc86a2bb..0ebc1016b934ae345820a6e8a84df2e19872c691 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 @@ -309,11 +309,13 @@ public class EnderMan extends Monster implements NeutralMob {

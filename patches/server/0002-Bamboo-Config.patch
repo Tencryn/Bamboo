@@ -5,10 +5,10 @@ Subject: [PATCH] Bamboo Config
 
 
 diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
-index 0f4b41fd7037f380f759a93f9ef70b4860816ad1..beb63192fc532d70c25a88181333c88cbb132d2d 100644
+index aa906caf51d81b26a5565a92ea24fb79c920a73a..a70873c7150571c62eaea9d2293dc2604c19d217 100644
 --- a/src/main/java/co/aikar/timings/TimingsExport.java
 +++ b/src/main/java/co/aikar/timings/TimingsExport.java
-@@ -231,7 +231,8 @@ public class TimingsExport extends Thread {
+@@ -235,7 +235,8 @@ public class TimingsExport extends Thread {
              pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
              pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null)),
              pair("pufferfish", mapAsJSON(gg.pufferfish.pufferfish.PufferfishConfig.getConfigCopy(), null)), // Pufferfish
@@ -180,7 +180,7 @@ index 0000000000000000000000000000000000000000..fab62b8ff10eaa75f4b5c8032aac69f9
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 9e2a74c3aca9525f49036bbd9e7c45c0ec5996c6..c1c5eec39e342c2184c15b55028508af48ed8ac3 100644
+index d399abaaa26da2a2a50e133b009768dc56cea000..54ca505b6a675e2c0c1f0bbce6d45cad762499a0 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -953,6 +953,7 @@ public final class CraftServer implements Server {
