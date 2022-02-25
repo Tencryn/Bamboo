@@ -5,10 +5,10 @@ Subject: [PATCH] Bamboo Config
 
 
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 1a38b9e616c6096d8d64c8abaa7178bc5f84e8d4..b5c3723f00177d6ce27be95162a97b8e682b4be9 100644
+index 97e26767b9143e290fb232013090a91bb67bca7c..8522cec69b78befe6e3483034ffdd42e4e41c987 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -1805,6 +1805,13 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -1901,6 +1901,13 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
          }
          // Purpur end
  
