@@ -5,10 +5,10 @@ Subject: [PATCH] Disable Enderman Teleporting From Spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index 8fd2721aaaee8148798f49fdc5b239dcdc86a2bb..0ebc1016b934ae345820a6e8a84df2e19872c691 100644
+index fee9d1eaadcee7d5bbdacceab5f6e25a30c7e5f2..daef4f99e7d2fe49c703d4ab745aa8585c542291 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-@@ -309,11 +309,13 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -308,11 +308,13 @@ public class EnderMan extends Monster implements NeutralMob {
      @Override
      protected void customServerAiStep() {
          if ((getRider() == null || !this.isControllable()) && this.level.isDay() && this.tickCount >= this.targetChangeTime + 600) { // Purpur - no random teleporting
@@ -26,7 +26,7 @@ index 8fd2721aaaee8148798f49fdc5b239dcdc86a2bb..0ebc1016b934ae345820a6e8a84df2e1
              }
          }
  
-@@ -415,6 +417,7 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -414,6 +416,7 @@ public class EnderMan extends Monster implements NeutralMob {
          if (this.isInvulnerableTo(source)) {
              return false;
          } else if (getRider() != null && this.isControllable()) { return super.hurt(source, amount); // Purpur - no teleporting on damage
@@ -34,7 +34,7 @@ index 8fd2721aaaee8148798f49fdc5b239dcdc86a2bb..0ebc1016b934ae345820a6e8a84df2e1
          } else if (org.purpurmc.purpur.PurpurConfig.endermanShortHeight && source == DamageSource.IN_WALL) { return false; // Purpur - no suffocation damage if short height
          } else if (source instanceof IndirectEntityDamageSource && !(this.level.purpurConfig.endermanIgnoreProjectiles && source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile)) { // Purpur
              Entity entity = source.getDirectEntity();
-@@ -661,14 +664,16 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -660,14 +663,16 @@ public class EnderMan extends Monster implements NeutralMob {
                  }
              } else {
                  if (this.target != null && !this.enderman.isPassenger()) {

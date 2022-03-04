@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 52047b799fe241ba8501511899a7ff8e5cbe9925..b6cea2c185a109a00dc9b0ff6cf078a56e4bbc98 100644
+index bd5d784ad6fb9786e03bd614baa40954b9fe6090..974d1264eb839d04d00991b918c6aa9a1d731e82 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -18,7 +18,7 @@ repositories {
@@ -15,7 +15,7 @@ index 52047b799fe241ba8501511899a7ff8e5cbe9925..b6cea2c185a109a00dc9b0ff6cf078a5
 -    implementation(project(":purpur-api")) // Pufferfish // Paper // Purpur
 +    implementation(project(":Bamboo-API")) // Bamboo
      // Pufferfish start
-     implementation("io.papermc.paper:paper-mojangapi:1.18.1-R0.1-SNAPSHOT") {
+     implementation("io.papermc.paper:paper-mojangapi:1.18.2-R0.1-SNAPSHOT") {
          exclude("io.papermc.paper", "paper-api")
 @@ -89,7 +89,7 @@ tasks.jar {
          attributes(
@@ -140,10 +140,10 @@ index 8c3c68465197fafc14849dc38a572e309931e2a2..f2f1fe6fd1a632943282cfde8e948bed
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 808c1049c55acf028e3a6ed07209dea4624b215b..55bb30dec493e20cfb51d7e37e366a78fb5da6a4 100644
+index 1980bee459e8b0db7800903229aead69d6ceb21a..58db1830cc943d41d6acda3490a84fbbe4626e23 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1747,7 +1747,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1711,7 +1711,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -153,10 +153,10 @@ index 808c1049c55acf028e3a6ed07209dea4624b215b..55bb30dec493e20cfb51d7e37e366a78
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b1058eb25893f22eb535db8d8e6d82a20176e6d0..f99226a6069045b13fd22d86cde96a1eac1a7851 100644
+index f0e09c2ad08aa9ed8456e681621bf66fe55df30e..c181069720810243a145b195e5cbcd996e756683 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -251,7 +251,7 @@ import javax.annotation.Nullable; // Paper
+@@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {

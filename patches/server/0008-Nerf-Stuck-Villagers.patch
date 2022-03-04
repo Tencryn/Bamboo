@@ -76,10 +76,10 @@ index 1763764662e061d1f8de74b65de7fb5cc1caac5c..90f7c82c28cc887127fc57b08319d93f
          return ImmutableList.of(Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(InteractWith.of(EntityType.VILLAGER, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 2), Pair.of(new InteractWith<>(EntityType.VILLAGER, 8, AgeableMob::canBreed, AgeableMob::canBreed, MemoryModuleType.BREED_TARGET, speed, 2), 1), Pair.of(InteractWith.of(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 1), Pair.of(new VillageBoundRandomStroll(speed), 1), Pair.of(new SetWalkTargetFromLookTarget(speed, 2), 1), Pair.of(new JumpOnBed(speed), 1), Pair.of(new DoNothing(30, 60), 1)))), Pair.of(3, new GiveGiftToHero(100)), Pair.of(3, new SetLookAndInteract(EntityType.PLAYER, 4)), Pair.of(3, new ShowTradesToPlayer(400, 1600)), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new TradeWithVillager(), 1)))), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.BREED_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new VillagerMakeLove(), 1)))), getFullLookBehavior(), Pair.of(99, new UpdateActivityFromSchedule()));
      }
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 3cf27428820e9cd96cd54abe3bfc80d9e6bbf96a..4c9f660af2c3bede21daa2f640d07b4058cbf09a 100644
+index b5db8212aa6b20fbaa8ea7dbcd14c9cc13460fe0..7a76b43752d10baa24e5437be500bd011ccc0eb7 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-@@ -140,6 +140,8 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -142,6 +142,8 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      private final int brainTickOffset; // Purpur
      private boolean isLobotomized = false; public boolean isLobotomized() { return this.isLobotomized; } // Purpur
      private int notLobotomizedCount = 0; // Purpur
@@ -88,7 +88,7 @@ index 3cf27428820e9cd96cd54abe3bfc80d9e6bbf96a..4c9f660af2c3bede21daa2f640d07b40
  
      public long nextGolemPanic = -1; // Pufferfish
  
-@@ -241,6 +243,29 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -243,6 +245,29 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      }
      // Purpur end
  
@@ -118,7 +118,7 @@ index 3cf27428820e9cd96cd54abe3bfc80d9e6bbf96a..4c9f660af2c3bede21daa2f640d07b40
      @Override
      public Brain<Villager> getBrain() {
          return (Brain<Villager>) super.getBrain(); // CraftBukkit - decompile error
-@@ -278,14 +303,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -280,14 +305,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
              brain.addActivityWithConditions(Activity.WORK, VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))); // Purpur
          }
  
@@ -147,7 +147,7 @@ index 3cf27428820e9cd96cd54abe3bfc80d9e6bbf96a..4c9f660af2c3bede21daa2f640d07b40
          brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
          brain.setDefaultActivity(Activity.IDLE);
          brain.setActiveActivityIfPossible(Activity.IDLE);
-@@ -347,6 +378,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -349,6 +380,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          // Purpur end
          // Pufferfish start
          if (!inactive) {
@@ -161,7 +161,7 @@ index 3cf27428820e9cd96cd54abe3bfc80d9e6bbf96a..4c9f660af2c3bede21daa2f640d07b40
              // Purpur start
              boolean tick = (level.getGameTime() + brainTickOffset) % level.purpurConfig.villagerBrainTicks == 0;
              if (((ServerLevel) level).getServer().lagging ? tick : level.purpurConfig.villagerUseBrainTicksOnlyWhenLagging || tick)
-@@ -651,7 +689,11 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -653,7 +691,11 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          if (this.assignProfessionWhenSpawned) {
              nbt.putBoolean("AssignProfessionWhenSpawned", true);
          }
@@ -174,7 +174,7 @@ index 3cf27428820e9cd96cd54abe3bfc80d9e6bbf96a..4c9f660af2c3bede21daa2f640d07b40
      }
  
      @Override
-@@ -691,7 +733,14 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -693,7 +735,14 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          if (nbt.contains("AssignProfessionWhenSpawned")) {
              this.assignProfessionWhenSpawned = nbt.getBoolean("AssignProfessionWhenSpawned");
          }
