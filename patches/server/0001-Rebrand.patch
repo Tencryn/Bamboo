@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index bd5d784ad6fb9786e03bd614baa40954b9fe6090..974d1264eb839d04d00991b918c6aa9a1d731e82 100644
+index e8bbf2519a75a94002b20c31a709a41eec4716aa..0cba44c2b1be444214d78c54cd6abb3b287576a7 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -18,7 +18,7 @@ repositories {
@@ -140,10 +140,10 @@ index 8c3c68465197fafc14849dc38a572e309931e2a2..f2f1fe6fd1a632943282cfde8e948bed
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 1980bee459e8b0db7800903229aead69d6ceb21a..58db1830cc943d41d6acda3490a84fbbe4626e23 100644
+index d20a2a5e2d9e06a3913798bbddb438259b711c15..abbe3aca48cb4949fdb966495ba548cb5dff8d5b 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1711,7 +1711,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1725,7 +1725,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -153,7 +153,7 @@ index 1980bee459e8b0db7800903229aead69d6ceb21a..58db1830cc943d41d6acda3490a84fbb
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index f0e09c2ad08aa9ed8456e681621bf66fe55df30e..c181069720810243a145b195e5cbcd996e756683 100644
+index a3e01874786613874708f1cbe95893fc7834ab45..3378792310a5eddc58447cda1a694a9798835ecc 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
