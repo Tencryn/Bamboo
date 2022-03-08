@@ -1,0 +1,5 @@
+tiny	2	0	mojang+yarn	spigot
+
+# Build fix by MoritzR200
+c	net/minecraft/server/dedicated/DedicatedServerProperties	net/minecraft/server/dedicated/DedicatedServerProperties
+	m	(Ljava/lang/String;)Ljava/lang/String;	lambda$new$3	d
