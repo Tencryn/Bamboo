@@ -5,7 +5,7 @@ Subject: [PATCH] Disable Sheep Griefing Blocks
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
-index 16e66ae7cf761fabb74a035e2fd8c28615365dc2..9073c7e77314314d5a60848e8c731bcdd3101c0a 100644
+index 3e4eb4ba8e18ac3a96e908db0448e22ef2440c67..1e2e6f014eb24525652ac41f7ff0af6d6981e561 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 @@ -3,7 +3,11 @@ package net.minecraft.world.entity.ai.goal;
@@ -45,13 +45,13 @@ index 16e66ae7cf761fabb74a035e2fd8c28615365dc2..9073c7e77314314d5a60848e8c731bcd
  
                  if (this.level.getBlockState(blockposition1).is(Blocks.GRASS_BLOCK)) {
 -                    // CraftBukkit
--                    if (!CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockposition1, Blocks.AIR.defaultBlockState(),  !this.level.purpurConfig.sheepBypassMobGriefing && !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)).isCancelled()) { // Purpur
+-                    if (!CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockposition1, Blocks.DIRT.defaultBlockState(), !this.level.purpurConfig.sheepBypassMobGriefing && !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)).isCancelled()) { // Paper - Fix wrong block state // Purpur
 -                        this.level.levelEvent(2001, blockposition1, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
 -                        this.level.setBlock(blockposition1, Blocks.DIRT.defaultBlockState(), 2);
 +                    // Bamboo start
 +                    if (net.rocryn.bamboo.BambooConfig.sheepGriefGrass) {
 +                        // CraftBukkit
-+                        if (!CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockposition1, Blocks.AIR.defaultBlockState(), !this.level.purpurConfig.sheepBypassMobGriefing && !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)).isCancelled()) { // Purpur
++                        if (!CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockposition1, Blocks.DIRT.defaultBlockState(), !this.level.purpurConfig.sheepBypassMobGriefing && !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)).isCancelled()) { // Paper - Fix wrong block state // Purpur
 +                            this.level.levelEvent(2001, blockposition1, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
 +                            this.level.setBlock(blockposition1, Blocks.DIRT.defaultBlockState(), 2);
 +                        }
