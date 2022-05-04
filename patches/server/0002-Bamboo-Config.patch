@@ -180,7 +180,7 @@ index 0000000000000000000000000000000000000000..fab62b8ff10eaa75f4b5c8032aac69f9
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 50f7d2c90e1ed640a0683cf452b3daf8f40a8d59..30b51165d0ad62c383ba1347a9e01d22ae152680 100644
+index 537eb1ad3a561e5b6a1399fbdf5e79a0cd9003c0..b926046842d6680bd488126401f4686232486063 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -957,6 +957,7 @@ public final class CraftServer implements Server {
@@ -191,7 +191,7 @@ index 50f7d2c90e1ed640a0683cf452b3daf8f40a8d59..30b51165d0ad62c383ba1347a9e01d22
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2734,6 +2735,11 @@ public final class CraftServer implements Server {
+@@ -2735,6 +2736,11 @@ public final class CraftServer implements Server {
          }
          // Purpur end
  
