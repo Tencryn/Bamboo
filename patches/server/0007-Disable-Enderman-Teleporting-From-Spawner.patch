@@ -5,16 +5,16 @@ Subject: [PATCH] Disable Enderman Teleporting From Spawner
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
-index 6a4214b6110119215154fee48d000bc1051ea626..fa3895efbdfa098a71659890967d27b9b2bc9661 100644
+index d3e1df950df2222277aaebf13e1f5d7713f1a3d7..1cdfb8c7fab29c2ac33ce4a4ae31af04c7193e79 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/EnderMan.java
 @@ -308,11 +308,13 @@ public class EnderMan extends Monster implements NeutralMob {
      @Override
      protected void customServerAiStep() {
          if ((getRider() == null || !this.isControllable()) && this.level.isDay() && this.tickCount >= this.targetChangeTime + 600) { // Purpur - no random teleporting
--            float f = this.getBrightness();
+-            float f = this.getLightLevelDependentMagicValue();
 +            if (net.rocryn.bamboo.BambooConfig.endermanSpawnerTeleport || !this.spawnedViaMobSpawner) { // Bamboo - don't teleport if spawned via spawner
-+                float f = this.getBrightness();
++                float f = this.getLightLevelDependentMagicValue();
  
 -            if (f > 0.5F && this.level.canSeeSky(this.blockPosition()) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && this.tryEscape(com.destroystokyo.paper.event.entity.EndermanEscapeEvent.Reason.RUNAWAY)) { // Paper
 -                this.setTarget((LivingEntity) null);
@@ -26,7 +26,7 @@ index 6a4214b6110119215154fee48d000bc1051ea626..fa3895efbdfa098a71659890967d27b9
              }
          }
  
-@@ -414,6 +416,7 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -412,6 +414,7 @@ public class EnderMan extends Monster implements NeutralMob {
          if (this.isInvulnerableTo(source)) {
              return false;
          } else if (getRider() != null && this.isControllable()) { return super.hurt(source, amount); // Purpur - no teleporting on damage
@@ -34,7 +34,7 @@ index 6a4214b6110119215154fee48d000bc1051ea626..fa3895efbdfa098a71659890967d27b9
          } else if (org.purpurmc.purpur.PurpurConfig.endermanShortHeight && source == DamageSource.IN_WALL) { return false; // Purpur - no suffocation damage if short height
          } else if (source instanceof IndirectEntityDamageSource && !(this.level.purpurConfig.endermanIgnoreProjectiles && source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile)) { // Purpur
              Entity entity = source.getDirectEntity();
-@@ -670,14 +673,16 @@ public class EnderMan extends Monster implements NeutralMob {
+@@ -668,14 +671,16 @@ public class EnderMan extends Monster implements NeutralMob {
                  }
              } else {
                  if (this.target != null && !this.enderman.isPassenger()) {

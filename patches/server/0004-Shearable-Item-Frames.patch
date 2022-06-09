@@ -5,10 +5,10 @@ Subject: [PATCH] Shearable Item Frames
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java b/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
-index e4c8b622cf3c7c57ada4c2e20a4b4a0f0b17de12..f962968235a3d36ca9645f48a0b7714c905c258f 100644
+index 2a3ec299283c2cc039877eade6e2ddee8f3812ea..354f02d41f50fa737d922bc2e585ef92d4003b5a 100644
 --- a/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
 +++ b/src/main/java/net/minecraft/world/entity/decoration/ItemFrame.java
-@@ -195,6 +195,11 @@ public class ItemFrame extends HangingEntity {
+@@ -197,6 +197,11 @@ public class ItemFrame extends HangingEntity {
                  // Paper end
                  this.dropItem(source.getEntity(), false);
                  this.playSound(this.getRemoveItemSound(), 1.0F, 1.0F);
@@ -20,7 +20,7 @@ index e4c8b622cf3c7c57ada4c2e20a4b4a0f0b17de12..f962968235a3d36ca9645f48a0b7714c
              }
  
              return true;
-@@ -452,13 +457,20 @@ public class ItemFrame extends HangingEntity {
+@@ -476,13 +481,20 @@ public class ItemFrame extends HangingEntity {
                      }
                  }
              } else {

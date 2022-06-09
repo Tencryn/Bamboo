@@ -5,18 +5,18 @@ Subject: [PATCH] Fuel Preservation
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index 158945281178c80495f1dc2125ea21a2cd6eeb90..98c35d43af2509f6bf016f7adac7765beeeddb50 100644
+index abb90af5eb73eb9c4c73f52feef9a29cccb7bbb9..7b6df04a0240b63f4d739e893547bb9488cbf265 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -79,6 +79,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -80,6 +80,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
      public double cookSpeedMultiplier = 1.0; // Paper - cook speed multiplier API
      public int cookingProgress;
      public int cookingTotalTime;
 +    public boolean isPreservingFuel; // Bamboo - fuel preservation
      protected final ContainerData dataAccess;
-     private final Object2IntOpenHashMap<ResourceLocation> recipesUsed;
-     public final RecipeType<? extends AbstractCookingRecipe> recipeType;
-@@ -313,6 +314,12 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+     public final Object2IntOpenHashMap<ResourceLocation> recipesUsed;
+     private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
+@@ -319,6 +320,12 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
              this.cookSpeedMultiplier = nbt.getDouble("Paper.CookSpeedMultiplier");
          }
          // Paper end
@@ -29,7 +29,7 @@ index 158945281178c80495f1dc2125ea21a2cd6eeb90..98c35d43af2509f6bf016f7adac7765b
      }
  
      @Override
-@@ -322,6 +329,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -328,6 +335,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
          nbt.putShort("CookTime", (short) this.cookingProgress);
          nbt.putShort("CookTimeTotal", (short) this.cookingTotalTime);
          nbt.putDouble("Paper.CookSpeedMultiplier", this.cookSpeedMultiplier); // Paper - cook speed multiplier API
@@ -37,11 +37,11 @@ index 158945281178c80495f1dc2125ea21a2cd6eeb90..98c35d43af2509f6bf016f7adac7765b
          ContainerHelper.saveAllItems(nbt, this.items);
          CompoundTag nbttagcompound1 = new CompoundTag();
  
-@@ -334,9 +342,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -340,9 +348,11 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
      public static void serverTick(Level world, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity) {
          boolean flag = blockEntity.isLit();
          boolean flag1 = false;
-+        boolean flag2 = blockEntity.isPreservingFuel; // Bamboo, fuel preservation
++        boolean flag4 = blockEntity.isPreservingFuel; // Bamboo, fuel preservation
  
          if (blockEntity.isLit()) {
              --blockEntity.litTime;
@@ -49,7 +49,7 @@ index 158945281178c80495f1dc2125ea21a2cd6eeb90..98c35d43af2509f6bf016f7adac7765b
          }
  
          ItemStack itemstack = (ItemStack) blockEntity.items.get(1);
-@@ -419,14 +429,29 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -434,14 +444,29 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
                  }
              } else {
                  blockEntity.cookingProgress = 0;
@@ -65,10 +65,10 @@ index 158945281178c80495f1dc2125ea21a2cd6eeb90..98c35d43af2509f6bf016f7adac7765b
  
 -        if (flag != blockEntity.isLit()) {
 +        // Bamboo start - fuel preservation
-+        if (flag != blockEntity.isLit() || flag2 != blockEntity.isPreservingFuel) {
++        if (flag != blockEntity.isLit() || flag4 != blockEntity.isPreservingFuel) {
 +            boolean lit = blockEntity.isLit();
 +
-+            if (flag2 != blockEntity.isPreservingFuel) {
++            if (flag4 != blockEntity.isPreservingFuel) {
 +                lit = !blockEntity.isPreservingFuel;
 +            }
 +

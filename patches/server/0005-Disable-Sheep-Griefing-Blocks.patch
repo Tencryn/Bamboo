@@ -5,7 +5,7 @@ Subject: [PATCH] Disable Sheep Griefing Blocks
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
-index 3e4eb4ba8e18ac3a96e908db0448e22ef2440c67..1e2e6f014eb24525652ac41f7ff0af6d6981e561 100644
+index a7b878f97128e530c5b47873dd226490d471406b..164f270bc16f2ae20c09ef19d0203f7618b6eb16 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 @@ -3,7 +3,11 @@ package net.minecraft.world.entity.ai.goal;
@@ -20,7 +20,7 @@ index 3e4eb4ba8e18ac3a96e908db0448e22ef2440c67..1e2e6f014eb24525652ac41f7ff0af6d
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Block;
-@@ -75,10 +79,16 @@ public class EatBlockGoal extends Goal {
+@@ -74,21 +78,33 @@ public class EatBlockGoal extends Goal {
              BlockPos blockposition = this.mob.blockPosition();
  
              if (EatBlockGoal.IS_TALL_GRASS.test(this.level.getBlockState(blockposition))) {
@@ -39,8 +39,7 @@ index 3e4eb4ba8e18ac3a96e908db0448e22ef2440c67..1e2e6f014eb24525652ac41f7ff0af6d
 +                // Bamboo stop
  
                  this.mob.ate();
-                 this.mob.gameEvent(GameEvent.EAT, this.mob.eyeBlockPosition());
-@@ -86,11 +96,17 @@ public class EatBlockGoal extends Goal {
+             } else {
                  BlockPos blockposition1 = blockposition.below();
  
                  if (this.level.getBlockState(blockposition1).is(Blocks.GRASS_BLOCK)) {
@@ -61,7 +60,7 @@ index 3e4eb4ba8e18ac3a96e908db0448e22ef2440c67..1e2e6f014eb24525652ac41f7ff0af6d
 +                    // Bamboo stop
  
                      this.mob.ate();
-                     this.mob.gameEvent(GameEvent.EAT, this.mob.eyeBlockPosition());
+                 }
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
 index 6aeede351a536fffe3f4ab3e55f0a5f5100b728a..17d253f2859f733b66efff43a1f455298cccc13d 100644
 --- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
