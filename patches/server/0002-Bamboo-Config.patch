@@ -19,11 +19,11 @@ index 1789fdbd8b59f9d465ba0881481a578d5c7f9ec6..79311dfc6ec3e1dd1499684b135aab11
          ));
  
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 0c5a4bb23f115ef7d98a4908f7a15031a544289b..c46fa825759a995817c911cdfe1f936652c6e7f6 100644
+index 31b8078c550e8619aff54da9a19730fd706e3a39..11f44c4a4291642cc3ec2dbbc4cc1c4ce11617d1 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -237,6 +237,14 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
-         io.papermc.paper.util.ObfHelper.INSTANCE.getClass(); // load mappings for stacktrace deobf and etc.
+@@ -234,6 +234,14 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         com.destroystokyo.paper.VersionHistoryManager.INSTANCE.getClass(); // load version history now
          io.papermc.paper.brigadier.PaperBrigadierProviderImpl.INSTANCE.getClass(); // init PaperBrigadierProvider
          // Paper end
 +        // Bamboo start
@@ -180,18 +180,18 @@ index 0000000000000000000000000000000000000000..fab62b8ff10eaa75f4b5c8032aac69f9
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 1fc9a8569833fdc9b238976703f068bc0452d956..e462d279ecdf9fcccc6afa1938d93b0912cff699 100644
+index 481d7e34d3243576558bc43ab2718bd1e8deb48c..7eff322150315d6007ed37cf2c99f5d11049ae57 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -951,6 +951,7 @@ public final class CraftServer implements Server {
          org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
-         com.destroystokyo.paper.PaperConfig.init((File) console.options.valueOf("paper-settings")); // Paper
+         this.console.paperConfigurations.reloadConfigs(this.console);
          org.purpurmc.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur
 +        net.rocryn.bamboo.BambooConfig.init((File) console.options.valueOf("bamboo-settings")); // Bamboo
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2724,6 +2725,11 @@ public final class CraftServer implements Server {
+@@ -2723,6 +2724,11 @@ public final class CraftServer implements Server {
          }
          // Purpur end
  

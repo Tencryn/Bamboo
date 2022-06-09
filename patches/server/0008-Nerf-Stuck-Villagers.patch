@@ -5,7 +5,7 @@ Subject: [PATCH] Nerf Stuck Villagers
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-index 4f75f2be7070d49c2c60866ad7146da19ab61652..566055c5c129bf11a09b21b8da2fcf980f7686a5 100644
+index 43243537b765a2d270be6de3f053fea77ff67d18..cbc5af72e047f250368c3dcc951b98d09135734e 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 @@ -22,6 +22,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -16,16 +16,18 @@ index 4f75f2be7070d49c2c60866ad7146da19ab61652..566055c5c129bf11a09b21b8da2fcf98
  import net.minecraft.world.level.pathfinder.Path;
  
  public class AcquirePoi extends Behavior<PathfinderMob> {
-@@ -87,7 +88,8 @@ public class AcquirePoi extends Behavior<PathfinderMob> {
+@@ -87,9 +88,10 @@ public class AcquirePoi extends Behavior<PathfinderMob> {
                  return true;
              }
          };
--        Set<Pair<Holder<PoiType>, BlockPos>> set = poiManager.findAllClosestFirstWithType(this.poiType, predicate, entity.blockPosition(), 48, PoiManager.Occupancy.HAS_SPACE).limit(5L).collect(Collectors.toSet());
-+        int radius = ((Villager)entity).isNerfed() ? 1 : 48;
-+        Set<Pair<Holder<PoiType>, BlockPos>> set = poiManager.findAllClosestFirstWithType(this.poiType, predicate, entity.blockPosition(), radius, PoiManager.Occupancy.HAS_SPACE).limit(5L).collect(Collectors.toSet()); // Bamboo
++        int radius = ((Villager)entity).isNerfed() ? 1 : 48; // Bamboo
+         // Paper start - optimise POI access
+         java.util.List<Pair<Holder<PoiType>, BlockPos>> poiposes = new java.util.ArrayList<>();
+-        io.papermc.paper.util.PoiAccess.findNearestPoiPositions(poiManager, this.poiType, predicate, entity.blockPosition(), 48, 48*48, PoiManager.Occupancy.HAS_SPACE, false, 5, poiposes);
++        io.papermc.paper.util.PoiAccess.findNearestPoiPositions(poiManager, this.poiType, predicate, entity.blockPosition(), radius, radius*radius, PoiManager.Occupancy.HAS_SPACE, false, 5, poiposes); // Bamboo
+         Set<Pair<Holder<PoiType>, BlockPos>> set = new java.util.HashSet<>(poiposes);
+         // Paper end - optimise POI access
          Path path = findPathToPois(entity, set);
-         if (path != null && path.canReach()) {
-             BlockPos blockPos = path.getTarget();
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java b/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
 index ba17618784b76384737e876d790eafe76a7cec8d..08ee0966157c69fe14255a3a1addc168e112de8b 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
@@ -70,7 +72,7 @@ index ba17618784b76384737e876d790eafe76a7cec8d..08ee0966157c69fe14255a3a1addc168
          return ImmutableList.of(Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(InteractWith.of(EntityType.VILLAGER, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 2), Pair.of(new InteractWith<>(EntityType.VILLAGER, 8, AgeableMob::canBreed, AgeableMob::canBreed, MemoryModuleType.BREED_TARGET, speed, 2), 1), Pair.of(InteractWith.of(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 1), Pair.of(new VillageBoundRandomStroll(speed), 1), Pair.of(new SetWalkTargetFromLookTarget(speed, 2), 1), Pair.of(new JumpOnBed(speed), 1), Pair.of(new DoNothing(30, 60), 1)))), Pair.of(3, new GiveGiftToHero(100)), Pair.of(3, new SetLookAndInteract(EntityType.PLAYER, 4)), Pair.of(3, new ShowTradesToPlayer(400, 1600)), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new TradeWithVillager(), 1)))), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.BREED_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new VillagerMakeLove(), 1)))), getFullLookBehavior(), Pair.of(99, new UpdateActivityFromSchedule()));
      }
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 256e4d396c9fe0822f4006ef101f1a8f1fbd1d2a..1872b7a35d83f5def23af74816ff17976dfc505c 100644
+index 529eb1c93bec2c489fbf1e7053119bad6fbdf047..d5261ce0481b200012d2ecf654ecaa8488977b33 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -142,6 +142,8 @@ public class Villager extends AbstractVillager implements ReputationEventHandler

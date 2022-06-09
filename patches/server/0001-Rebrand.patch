@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index c88e837d88309708c109561a2bdda1762332802f..a9c65bb224f74d80a856262771b0799938732580 100644
+index 2dac3fae601fc9d8ec68db8a47010d727f043b8c..5104f7216fc57ff1fab296c3e79d43ce0ccf4c32 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -9,7 +9,7 @@ plugins {
@@ -27,7 +27,7 @@ index c88e837d88309708c109561a2bdda1762332802f..a9c65bb224f74d80a856262771b07999
              "Specification-Title" to "Bukkit",
              "Specification-Version" to project.version,
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 4d8740678049aa749b42618470e9cc838555528d..b66547095fdc655055812949872caca8acaf58ea 100644
+index acd95cf1dc7f009b63e44e4404e1736283fd458e..3f4b2009b51af9a0e197735698b01527cce11023 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
 @@ -593,8 +593,7 @@ public class Metrics {
@@ -43,7 +43,7 @@ index 4d8740678049aa749b42618470e9cc838555528d..b66547095fdc655055812949872caca8
 @@ -603,7 +602,7 @@ public class Metrics {
  
                  metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
-                 metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : (PaperConfig.isProxyOnlineMode() ? "bungee" : "offline"))); // Purpur
+                 metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() ? "bungee" : "offline"))); // Purpur
 -                metrics.addCustomChart(new Metrics.SimplePie("purpur_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown")); // Purpur
 +                metrics.addCustomChart(new Metrics.SimplePie("bamboo_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown")); // Purpur // Bamboo
  
@@ -127,7 +127,7 @@ index fba5dbdb7bcbb55400ef18342c9b54612972a718..600f9e3d28925fdc7d2a8907b3c3087d
      }
  
 diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
-index 8c3c68465197fafc14849dc38a572e309931e2a2..f2f1fe6fd1a632943282cfde8e948bed6b3bab1e 100644
+index 005fdd2e2ebc0b6f7cb06b2efdb705b9ed23a1ea..2f512e0feff0c36a92396dccd4034cffe0e2d802 100644
 --- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 +++ b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 @@ -17,7 +17,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
@@ -140,7 +140,7 @@ index 8c3c68465197fafc14849dc38a572e309931e2a2..f2f1fe6fd1a632943282cfde8e948bed
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 5d64310a6705bda4781257a856647301e7c6ff68..98527992f143e2e3f9a374887459d652966a3a1d 100644
+index dc306e6df26a8153348d509b7d5c0c6526100f1c..3a5f1857e1ca04ba29f31999f83c084c1068ab10 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1680,7 +1680,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -153,7 +153,7 @@ index 5d64310a6705bda4781257a856647301e7c6ff68..98527992f143e2e3f9a374887459d652
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 41be109438f5cadebcf3088ff8cb6bdde2c1044b..1fc9a8569833fdc9b238976703f068bc0452d956 100644
+index 988fdfae38f0e9f472a7a5fddcf41a25484bafbe..481d7e34d3243576558bc43ab2718bd1e8deb48c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -243,7 +243,7 @@ import javax.annotation.Nullable; // Paper
