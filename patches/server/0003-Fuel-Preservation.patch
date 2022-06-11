@@ -5,7 +5,7 @@ Subject: [PATCH] Fuel Preservation
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-index abb90af5eb73eb9c4c73f52feef9a29cccb7bbb9..7b6df04a0240b63f4d739e893547bb9488cbf265 100644
+index e1abe61edfaa7b1497b5367310b49146f10fa139..82a739a80704aeea4e3957d23f754b1ea9b9483c 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 @@ -80,6 +80,7 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
@@ -49,7 +49,7 @@ index abb90af5eb73eb9c4c73f52feef9a29cccb7bbb9..7b6df04a0240b63f4d739e893547bb94
          }
  
          ItemStack itemstack = (ItemStack) blockEntity.items.get(1);
-@@ -434,14 +444,29 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
+@@ -433,14 +443,29 @@ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntit
                  }
              } else {
                  blockEntity.cookingProgress = 0;

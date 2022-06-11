@@ -5,7 +5,7 @@ Subject: [PATCH] Nerf Stuck Villagers
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-index 43243537b765a2d270be6de3f053fea77ff67d18..cbc5af72e047f250368c3dcc951b98d09135734e 100644
+index bf3b8ccb3e031e0ad24cd51e28ea8cbd4f8a8030..5ca7cf30d737c8b585a8f26e2b47d38ce643cc23 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 @@ -22,6 +22,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -16,7 +16,7 @@ index 43243537b765a2d270be6de3f053fea77ff67d18..cbc5af72e047f250368c3dcc951b98d0
  import net.minecraft.world.level.pathfinder.Path;
  
  public class AcquirePoi extends Behavior<PathfinderMob> {
-@@ -87,9 +88,10 @@ public class AcquirePoi extends Behavior<PathfinderMob> {
+@@ -88,9 +89,10 @@ public class AcquirePoi extends Behavior<PathfinderMob> {
                  return true;
              }
          };
@@ -72,7 +72,7 @@ index ba17618784b76384737e876d790eafe76a7cec8d..08ee0966157c69fe14255a3a1addc168
          return ImmutableList.of(Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(InteractWith.of(EntityType.VILLAGER, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 2), Pair.of(new InteractWith<>(EntityType.VILLAGER, 8, AgeableMob::canBreed, AgeableMob::canBreed, MemoryModuleType.BREED_TARGET, speed, 2), 1), Pair.of(InteractWith.of(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 1), Pair.of(new VillageBoundRandomStroll(speed), 1), Pair.of(new SetWalkTargetFromLookTarget(speed, 2), 1), Pair.of(new JumpOnBed(speed), 1), Pair.of(new DoNothing(30, 60), 1)))), Pair.of(3, new GiveGiftToHero(100)), Pair.of(3, new SetLookAndInteract(EntityType.PLAYER, 4)), Pair.of(3, new ShowTradesToPlayer(400, 1600)), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new TradeWithVillager(), 1)))), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.BREED_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new VillagerMakeLove(), 1)))), getFullLookBehavior(), Pair.of(99, new UpdateActivityFromSchedule()));
      }
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 529eb1c93bec2c489fbf1e7053119bad6fbdf047..d5261ce0481b200012d2ecf654ecaa8488977b33 100644
+index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb901c68165 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -142,6 +142,8 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
@@ -82,9 +82,9 @@ index 529eb1c93bec2c489fbf1e7053119bad6fbdf047..d5261ce0481b200012d2ecf654ecaa84
 +    private boolean isNerfed = false; public boolean isNerfed() { return this.isNerfed; } // Bamboo
 +    private int notNerfedCount = 0; // Bamboo
  
-     public Villager(EntityType<? extends Villager> entityType, Level world) {
-         this(entityType, world, VillagerType.PLAINS);
-@@ -241,6 +243,29 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+     public long nextGolemPanic = -1; // Pufferfish
+ 
+@@ -243,6 +245,29 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      }
      // Purpur end
  
@@ -114,7 +114,7 @@ index 529eb1c93bec2c489fbf1e7053119bad6fbdf047..d5261ce0481b200012d2ecf654ecaa84
      @Override
      public Brain<Villager> getBrain() {
          return (Brain<Villager>) super.getBrain(); // CraftBukkit - decompile error
-@@ -278,14 +303,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -280,14 +305,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
              brain.addActivityWithConditions(Activity.WORK, VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))); // Purpur
          }
  
@@ -143,21 +143,21 @@ index 529eb1c93bec2c489fbf1e7053119bad6fbdf047..d5261ce0481b200012d2ecf654ecaa84
          brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
          brain.setDefaultActivity(Activity.IDLE);
          brain.setActiveActivityIfPossible(Activity.IDLE);
-@@ -344,6 +375,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
-             this.isLobotomized = false;
-         }
- 
-+        // Bamboo start
-+        if (net.rocryn.bamboo.BambooConfig.villagerNerfEnabled && this.isNerfed != this.checkNerfed()) {
-+            if (this.level instanceof ServerLevel) {
-+                this.refreshBrain((ServerLevel) this.level);
-+            }
-+        }
-+        // Bamboo end
-         boolean tick = (level.getGameTime() + brainTickOffset) % level.purpurConfig.villagerBrainTicks == 0;
-         if (((ServerLevel) level).getServer().lagging ? tick : level.purpurConfig.villagerUseBrainTicksOnlyWhenLagging || tick)
+@@ -349,6 +380,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          // Purpur end
-@@ -645,7 +683,11 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+         // Pufferfish start
+         if (!inactive) {
++            // Bamboo start
++            if (net.rocryn.bamboo.BambooConfig.villagerNerfEnabled && this.isNerfed != this.checkNerfed()) {
++                if (this.level instanceof ServerLevel) {
++                    this.refreshBrain((ServerLevel) this.level);
++                }
++            }
++            // Bamboo end
+             // Purpur start
+             boolean tick = (level.getGameTime() + brainTickOffset) % level.purpurConfig.villagerBrainTicks == 0;
+             if (((ServerLevel) level).getServer().lagging ? tick : level.purpurConfig.villagerUseBrainTicksOnlyWhenLagging || tick)
+@@ -653,7 +691,11 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          if (this.assignProfessionWhenSpawned) {
              nbt.putBoolean("AssignProfessionWhenSpawned", true);
          }
@@ -170,7 +170,7 @@ index 529eb1c93bec2c489fbf1e7053119bad6fbdf047..d5261ce0481b200012d2ecf654ecaa84
      }
  
      @Override
-@@ -685,7 +727,14 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -693,7 +735,14 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          if (nbt.contains("AssignProfessionWhenSpawned")) {
              this.assignProfessionWhenSpawned = nbt.getBoolean("AssignProfessionWhenSpawned");
          }
