@@ -5,7 +5,7 @@ Subject: [PATCH] Rebrand
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index a9e3d314581b7ce5110266bdd53af1978b66e336..7b84ace5e94ae0beeb31a170b185bb9fde942680 100644
+index 00d128eba3e778927bc33b71c1145051a0c142f5..4509b03cbf010b616b44b887fe49d9ebf14ca414 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -9,7 +9,7 @@ plugins {
@@ -14,10 +14,10 @@ index a9e3d314581b7ce5110266bdd53af1978b66e336..7b84ace5e94ae0beeb31a170b185bb9f
  dependencies {
 -    implementation(project(":purpur-api")) // Purpur
 +    implementation(project(":Bamboo-API")) // Bamboo
-     implementation("io.papermc.paper:paper-mojangapi:1.18.2-R0.1-SNAPSHOT") { exclude("io.papermc.paper", "paper-api") } // Purpur // todo: 1.19
-     // Paper start
-     implementation("org.jline:jline-terminal-jansi:3.21.0")
-@@ -81,7 +81,7 @@ tasks.jar {
+     // Pufferfish start
+     implementation("io.papermc.paper:paper-mojangapi:1.19-R0.1-SNAPSHOT") {
+         exclude("io.papermc.paper", "paper-api")
+@@ -87,7 +87,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
@@ -140,7 +140,7 @@ index 005fdd2e2ebc0b6f7cb06b2efdb705b9ed23a1ea..2f512e0feff0c36a92396dccd4034cff
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index aef3a977a74255b5a81af608ac7e3dd9d3a583b7..aab3732b08878dcb6db1ddbb5fe138b8e3df6a5b 100644
+index ee32920e59908c8808bae7bc29a4789d6a3810d3..ba545733a0178f998a4b8d6c2268d1c5424842e1 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1682,7 +1682,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
