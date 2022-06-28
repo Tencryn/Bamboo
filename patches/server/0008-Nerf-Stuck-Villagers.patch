@@ -29,13 +29,14 @@ index bf3b8ccb3e031e0ad24cd51e28ea8cbd4f8a8030..5ca7cf30d737c8b585a8f26e2b47d38c
          // Paper end - optimise POI access
          Path path = findPathToPois(entity, set);
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java b/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
-index ba17618784b76384737e876d790eafe76a7cec8d..08ee0966157c69fe14255a3a1addc168e112de8b 100644
+index ba17618784b76384737e876d790eafe76a7cec8d..3d8323b3ca6db62baaaf1a8b62ef4680b09578ad 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
-@@ -18,6 +18,20 @@ import net.minecraft.world.entity.npc.VillagerProfession;
- public class VillagerGoalPackages {
-     private static final float STROLL_SPEED_MODIFIER = 0.4F;
- 
+@@ -25,6 +25,21 @@ public class VillagerGoalPackages {
+             return holder.is(PoiTypes.MEETING);
+         }, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14))), Pair.of(10, new AssignProfessionFromJobSite()), Pair.of(10, new ResetProfession()));
+     }
++    // Bamboo start
 +    public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getNerfedCorePackage(VillagerProfession profession, float speed) {
 +        return ImmutableList.of(
 +            Pair.of(0, new LookAtTargetSink(45, 90)),
@@ -49,17 +50,54 @@ index ba17618784b76384737e876d790eafe76a7cec8d..08ee0966157c69fe14255a3a1addc168
 +            Pair.of(10, new ResetProfession())
 +        );
 +    }
-+
-     public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getCorePackage(VillagerProfession profession, float speed) {
-         return ImmutableList.of(Pair.of(0, new Swim(0.8F)), Pair.of(0, new InteractWithDoor()), Pair.of(0, new LookAtTargetSink(45, 90)), Pair.of(0, new VillagerPanicTrigger()), Pair.of(0, new WakeUp()), Pair.of(0, new ReactToBell()), Pair.of(0, new SetRaidStatus()), Pair.of(0, new ValidateNearbyPoi(profession.heldJobSite(), MemoryModuleType.JOB_SITE)), Pair.of(0, new ValidateNearbyPoi(profession.acquirableJobSite(), MemoryModuleType.POTENTIAL_JOB_SITE)), Pair.of(1, new MoveToTargetSink()), Pair.of(2, new PoiCompetitorScan(profession)), Pair.of(3, new LookAndFollowTradingPlayerSink(speed)), Pair.of(5, new GoToWantedItem(speed, false, 4)), Pair.of(6, new AcquirePoi(profession.acquirableJobSite(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())), Pair.of(7, new GoToPotentialJobSite(speed)), Pair.of(8, new YieldJobSite(speed)), Pair.of(10, new AcquirePoi((holder) -> {
-             return holder.is(PoiTypes.HOME);
-@@ -58,6 +72,17 @@ public class VillagerGoalPackages {
-         }, MemoryModuleType.MEETING_POINT)), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new TradeWithVillager(), 1)))), getFullLookBehavior(), Pair.of(99, new UpdateActivityFromSchedule()));
-     }
++    // Bamboo end
  
+     public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getWorkPackage(VillagerProfession profession, float speed) {
+         // Purpur start
+@@ -41,6 +56,35 @@ public class VillagerGoalPackages {
+ 
+         return ImmutableList.of(getMinimalLookBehavior(), Pair.of(5, new RunOne<>(ImmutableList.of(Pair.of(workAtPoi, 7), Pair.of(new StrollAroundPoi(MemoryModuleType.JOB_SITE, 0.4F, 4), 2), Pair.of(new StrollToPoi(MemoryModuleType.JOB_SITE, 0.4F, 1, 10), 5), Pair.of(new StrollToPoiList(MemoryModuleType.SECONDARY_JOB_SITE, speed, 1, 6, MemoryModuleType.JOB_SITE), 5), Pair.of(new HarvestFarmland(), profession == VillagerProfession.FARMER ? 2 : 5), Pair.of(new UseBonemeal(), profession == VillagerProfession.FARMER ? 4 : 7)))), Pair.of(10, new ShowTradesToPlayer(400, 1600)), Pair.of(10, new SetLookAndInteract(EntityType.PLAYER, 4)), Pair.of(2, new SetWalkTargetFromBlockMemory(MemoryModuleType.JOB_SITE, speed, 9, 100, 1200)), Pair.of(3, new GiveGiftToHero(100)), Pair.of(99, new UpdateActivityFromSchedule()));
+     }
++    // Bamboo start
++    public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getNerfedWorkPackage(VillagerProfession profession, float speed, boolean clericsFarmWarts) {
++        WorkAtPoi workAtPoi;
++        if (profession == VillagerProfession.FARMER || (clericsFarmWarts && profession == VillagerProfession.CLERIC)) { // Purpur
++            workAtPoi = new WorkAtComposter();
++        } else {
++            workAtPoi = new WorkAtPoi();
++        }
++
++        return ImmutableList.of(
++            getMinimalLookBehavior(),
++            Pair.of(5, new RunOne<>(
++                ImmutableList.of(
++                    Pair.of(workAtPoi, 7),
++                    // Pair.of(new StrollAroundPoi(MemoryModuleType.JOB_SITE, 0.4F, 4), 2),
++                    // Pair.of(new StrollToPoi(MemoryModuleType.JOB_SITE, 0.4F, 1, 10), 5),
++                    // Pair.of(new StrollToPoiList(MemoryModuleType.SECONDARY_JOB_SITE, speed, 1, 6, MemoryModuleType.JOB_SITE), 5),
++                    Pair.of(new HarvestFarmland(), profession == VillagerProfession.FARMER ? 2 : 5),
++                    Pair.of(new UseBonemeal(), profession == VillagerProfession.FARMER ? 4 : 7)
++                )
++            )),
++            Pair.of(10, new ShowTradesToPlayer(400, 1600)),
++            Pair.of(10, new SetLookAndInteract(EntityType.PLAYER, 4)),
++            // Pair.of(2, new SetWalkTargetFromBlockMemory(MemoryModuleType.JOB_SITE, speed, 9, 100, 1200)),
++            Pair.of(3, new GiveGiftToHero(100)),
++            Pair.of(99, new UpdateActivityFromSchedule())
++        );
++    }
++    // Bamboo end
+ 
+     public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getPlayPackage(float speed) {
+         return ImmutableList.of(Pair.of(0, new MoveToTargetSink(80, 120)), getFullLookBehavior(), Pair.of(5, new PlayTagWithOtherKids()), Pair.of(5, new RunOne<>(ImmutableMap.of(MemoryModuleType.VISIBLE_VILLAGER_BABIES, MemoryStatus.VALUE_ABSENT), ImmutableList.of(Pair.of(InteractWith.of(EntityType.VILLAGER, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 2), Pair.of(InteractWith.of(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 1), Pair.of(new VillageBoundRandomStroll(speed), 1), Pair.of(new SetWalkTargetFromLookTarget(speed, 2), 1), Pair.of(new JumpOnBed(speed), 2), Pair.of(new DoNothing(20, 40), 2)))), Pair.of(99, new UpdateActivityFromSchedule()));
+@@ -61,6 +105,18 @@ public class VillagerGoalPackages {
+     public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getIdlePackage(VillagerProfession profession, float speed) {
+         return ImmutableList.of(Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(InteractWith.of(EntityType.VILLAGER, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 2), Pair.of(new InteractWith<>(EntityType.VILLAGER, 8, AgeableMob::canBreed, AgeableMob::canBreed, MemoryModuleType.BREED_TARGET, speed, 2), 1), Pair.of(InteractWith.of(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 1), Pair.of(new VillageBoundRandomStroll(speed), 1), Pair.of(new SetWalkTargetFromLookTarget(speed, 2), 1), Pair.of(new JumpOnBed(speed), 1), Pair.of(new DoNothing(30, 60), 1)))), Pair.of(3, new GiveGiftToHero(100)), Pair.of(3, new SetLookAndInteract(EntityType.PLAYER, 4)), Pair.of(3, new ShowTradesToPlayer(400, 1600)), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new TradeWithVillager(), 1)))), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.BREED_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new VillagerMakeLove(), 1)))), getFullLookBehavior(), Pair.of(99, new UpdateActivityFromSchedule()));
+     }
++    // Bamboo start
 +    public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getNerfedIdlePackage(VillagerProfession profession, float speed) {
 +        return ImmutableList.of(
-+            //Pair.of(2, new DoNothing(30, 60)),
++            Pair.of(2, new DoNothing(30, 60)),
 +            Pair.of(3, new GiveGiftToHero(100)),
 +            Pair.of(3, new SetLookAndInteract(EntityType.PLAYER, 4)),
 +            Pair.of(3, new ShowTradesToPlayer(400, 1600)),
@@ -67,15 +105,23 @@ index ba17618784b76384737e876d790eafe76a7cec8d..08ee0966157c69fe14255a3a1addc168
 +            Pair.of(99, new UpdateActivityFromSchedule())
 +        );
 +    }
-+
-     public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getIdlePackage(VillagerProfession profession, float speed) {
-         return ImmutableList.of(Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(InteractWith.of(EntityType.VILLAGER, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 2), Pair.of(new InteractWith<>(EntityType.VILLAGER, 8, AgeableMob::canBreed, AgeableMob::canBreed, MemoryModuleType.BREED_TARGET, speed, 2), 1), Pair.of(InteractWith.of(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speed, 2), 1), Pair.of(new VillageBoundRandomStroll(speed), 1), Pair.of(new SetWalkTargetFromLookTarget(speed, 2), 1), Pair.of(new JumpOnBed(speed), 1), Pair.of(new DoNothing(30, 60), 1)))), Pair.of(3, new GiveGiftToHero(100)), Pair.of(3, new SetLookAndInteract(EntityType.PLAYER, 4)), Pair.of(3, new ShowTradesToPlayer(400, 1600)), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new TradeWithVillager(), 1)))), Pair.of(3, new GateBehavior<>(ImmutableMap.of(), ImmutableSet.of(MemoryModuleType.BREED_TARGET), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.RUN_ONE, ImmutableList.of(Pair.of(new VillagerMakeLove(), 1)))), getFullLookBehavior(), Pair.of(99, new UpdateActivityFromSchedule()));
-     }
++    // Bamboo end
+ 
+     public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getPanicPackage(VillagerProfession profession, float speed) {
+         float f = speed * 1.5F;
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb901c68165 100644
+index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..cb7ca2719def933581e907256530747726d2a7d9 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-@@ -142,6 +142,8 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -87,6 +87,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
+ import net.minecraft.world.item.trading.MerchantOffers;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.ServerLevelAccessor;
++import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.phys.AABB;
+ import org.slf4j.Logger;
+ 
+@@ -142,6 +143,8 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      private final int brainTickOffset; // Purpur
      private boolean isLobotomized = false; public boolean isLobotomized() { return this.isLobotomized; } // Purpur
      private int notLobotomizedCount = 0; // Purpur
@@ -84,7 +130,7 @@ index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb9
  
      public long nextGolemPanic = -1; // Pufferfish
  
-@@ -243,6 +245,29 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -243,6 +246,45 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      }
      // Purpur end
  
@@ -97,8 +143,13 @@ index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb9
 +        }
 +
 +        if ((this.level.getGameTime() + brainTickOffset) % interval == 0) {
-+            // offset Y for short blocks like dirt_path/farmland
-+            this.isNerfed = !canTravelFrom(new BlockPos(getX(), getY() + 0.0625D, getZ()));
++            boolean temp = false;
++
++            if (net.rocryn.bamboo.BambooConfig.villagerNerfRequiresEmeraldBlock) {
++                temp = hasEmeraldBlockBelow(new BlockPos(getX(), getY() - 1D, getZ()));
++            }
++
++            this.isNerfed = temp || !canTravelFrom(new BlockPos(getX(), getY() + 0.0625D, getZ()));
 +
 +            if (this.isNerfed) {
 +                this.notNerfedCount = 0;
@@ -109,13 +160,54 @@ index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb9
 +
 +        return this.isNerfed;
 +    }
++
++    public boolean hasEmeraldBlockBelow(BlockPos pos) {
++        net.minecraft.world.level.block.state.BlockState state = this.level.getBlockStateIfLoaded(pos);
++        if (state == null) {
++            // chunk not loaded
++            return false;
++        }
++        net.minecraft.world.level.block.Block block = state.getBlock();
++
++        return block == Blocks.EMERALD_BLOCK;
++    }
 +    // Bamboo end
 +
      @Override
      public Brain<Villager> getBrain() {
          return (Brain<Villager>) super.getBrain(); // CraftBukkit - decompile error
-@@ -280,14 +305,20 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
-             brain.addActivityWithConditions(Activity.WORK, VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))); // Purpur
+@@ -269,30 +311,49 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+         this.registerBrainGoals(this.getBrain());
+     }
+ 
++    // Bamboo start
+     private void registerBrainGoals(Brain<Villager> brain) {
+         VillagerProfession villagerprofession = this.getVillagerData().getProfession();
+ 
+-        if (this.isBaby()) {
+-            brain.setSchedule(Schedule.VILLAGER_BABY);
+-            brain.addActivity(Activity.PLAY, VillagerGoalPackages.getPlayPackage(0.5F));
++        if (this.isNerfed) {
++            this.registerNerfedBrainGoals(brain, villagerprofession);
+         } else {
+-            brain.setSchedule(Schedule.VILLAGER_DEFAULT);
+-            brain.addActivityWithConditions(Activity.WORK, VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))); // Purpur
++            if (this.isBaby()) {
++                brain.setSchedule(Schedule.VILLAGER_BABY);
++                brain.addActivity(Activity.PLAY, VillagerGoalPackages.getPlayPackage(0.5F));
++            } else {
++                brain.setSchedule(Schedule.VILLAGER_DEFAULT);
++                brain.addActivityWithConditions(Activity.WORK, VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))); // Purpur
++            }
++
++            brain.addActivity(Activity.CORE, VillagerGoalPackages.getCorePackage(villagerprofession, 0.5F));
++            brain.addActivityWithConditions(Activity.MEET, VillagerGoalPackages.getMeetPackage(villagerprofession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryStatus.VALUE_PRESENT)));
++            brain.addActivity(Activity.REST, VillagerGoalPackages.getRestPackage(villagerprofession, 0.5F));
++            brain.addActivity(Activity.IDLE, VillagerGoalPackages.getIdlePackage(villagerprofession, 0.5F));
++            brain.addActivity(Activity.PANIC, VillagerGoalPackages.getPanicPackage(villagerprofession, 0.5F));
++            brain.addActivity(Activity.PRE_RAID, VillagerGoalPackages.getPreRaidPackage(villagerprofession, 0.5F));
++            brain.addActivity(Activity.RAID, VillagerGoalPackages.getRaidPackage(villagerprofession, 0.5F));
++            brain.addActivity(Activity.HIDE, VillagerGoalPackages.getHidePackage(villagerprofession, 0.5F));
          }
  
 -        brain.addActivity(Activity.CORE, VillagerGoalPackages.getCorePackage(villagerprofession, 0.5F));
@@ -126,24 +218,28 @@ index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb9
 -        brain.addActivity(Activity.PRE_RAID, VillagerGoalPackages.getPreRaidPackage(villagerprofession, 0.5F));
 -        brain.addActivity(Activity.RAID, VillagerGoalPackages.getRaidPackage(villagerprofession, 0.5F));
 -        brain.addActivity(Activity.HIDE, VillagerGoalPackages.getHidePackage(villagerprofession, 0.5F));
-+        if (!this.isNerfed) {
-+            brain.addActivity(Activity.CORE, VillagerGoalPackages.getCorePackage(villagerprofession, 0.5F));
-+            brain.addActivityWithConditions(Activity.MEET, VillagerGoalPackages.getMeetPackage(villagerprofession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryStatus.VALUE_PRESENT)));
-+            brain.addActivity(Activity.REST, VillagerGoalPackages.getRestPackage(villagerprofession, 0.5F));
-+            brain.addActivity(Activity.IDLE, VillagerGoalPackages.getIdlePackage(villagerprofession, 0.5F));
-+            brain.addActivity(Activity.PANIC, VillagerGoalPackages.getPanicPackage(villagerprofession, 0.5F));
-+            brain.addActivity(Activity.PRE_RAID, VillagerGoalPackages.getPreRaidPackage(villagerprofession, 0.5F));
-+            brain.addActivity(Activity.RAID, VillagerGoalPackages.getRaidPackage(villagerprofession, 0.5F));
-+            brain.addActivity(Activity.HIDE, VillagerGoalPackages.getHidePackage(villagerprofession, 0.5F));
-+        } else {
-+            brain.addActivity(Activity.CORE, VillagerGoalPackages.getNerfedCorePackage(villagerprofession, 0.5F));
-+            brain.addActivity(Activity.IDLE, VillagerGoalPackages.getNerfedIdlePackage(villagerprofession, 0.5F));
-+        }
-+
          brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
          brain.setDefaultActivity(Activity.IDLE);
          brain.setActiveActivityIfPossible(Activity.IDLE);
-@@ -349,6 +380,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+         brain.updateActivityFromSchedule(this.level.getDayTime(), this.level.getGameTime());
+     }
++    private void registerNerfedBrainGoals(Brain<Villager> brain, VillagerProfession villagerprofession) {
++        if (this.isBaby()) {
++            brain.setSchedule(Schedule.VILLAGER_BABY);
++            brain.addActivity(Activity.PLAY, VillagerGoalPackages.getPlayPackage(0.5F));
++        } else {
++            brain.setSchedule(Schedule.VILLAGER_DEFAULT);
++            brain.addActivityWithConditions(Activity.WORK, VillagerGoalPackages.getNerfedWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))); // Purpur
++        }
++
++        brain.addActivity(Activity.CORE, VillagerGoalPackages.getNerfedCorePackage(villagerprofession, 0.5F));
++        brain.addActivity(Activity.IDLE, VillagerGoalPackages.getNerfedIdlePackage(villagerprofession, 0.5F));
++    }
++    // Bamboo end
+ 
+     @Override
+     protected void ageBoundaryReached() {
+@@ -349,6 +410,13 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          // Purpur end
          // Pufferfish start
          if (!inactive) {
@@ -157,7 +253,7 @@ index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb9
              // Purpur start
              boolean tick = (level.getGameTime() + brainTickOffset) % level.purpurConfig.villagerBrainTicks == 0;
              if (((ServerLevel) level).getServer().lagging ? tick : level.purpurConfig.villagerUseBrainTicksOnlyWhenLagging || tick)
-@@ -653,7 +691,11 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -653,7 +721,11 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          if (this.assignProfessionWhenSpawned) {
              nbt.putBoolean("AssignProfessionWhenSpawned", true);
          }
@@ -170,7 +266,7 @@ index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb9
      }
  
      @Override
-@@ -693,7 +735,14 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -693,7 +765,14 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          if (nbt.contains("AssignProfessionWhenSpawned")) {
              this.assignProfessionWhenSpawned = nbt.getBoolean("AssignProfessionWhenSpawned");
          }
@@ -187,17 +283,19 @@ index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..d8ef287a725ae4d977a153f8f0719cb9
  
      @Override
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-index 2c8ca798ec4b93e2c4170ee347675bdd93bc31ae..756825f65117a1931a0f68b122f30a9602efecaf 100644
+index 2c8ca798ec4b93e2c4170ee347675bdd93bc31ae..514dd1ea912cdabd85701bc40e968072a831cb5e 100644
 --- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
 +++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-@@ -142,4 +142,10 @@ public class BambooConfig {
+@@ -142,4 +142,12 @@ public class BambooConfig {
  
      public static Boolean endermanSpawnerTeleport = true;
      private static void endermanSpawnerTeleport() { endermanSpawnerTeleport = getBoolean("mobs.hostile.enderman.teleport-if-spawned-via-spawner", endermanSpawnerTeleport); }
 +
 +    public static Boolean villagerNerfEnabled = false;
++    public static Boolean villagerNerfRequiresEmeraldBlock = false;
 +    public static int villagerNerfCheck = 60;
 +
 +    private static void villagerNerfEnabled() { villagerNerfEnabled = getBoolean("mobs.passive.villager.nerf.enabled", villagerNerfEnabled); }
++    private static void villagerNerfRequiresEmeraldBlock() { villagerNerfRequiresEmeraldBlock = getBoolean("mobs.passive.villager.nerf.require-emerald-block-below", villagerNerfRequiresEmeraldBlock); }
 +    private static void villagerNerfCheck() { villagerNerfCheck = getInt("mobs.passive.villager.nerf.check-interval", villagerNerfCheck); }
  }
