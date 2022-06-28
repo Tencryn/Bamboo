@@ -180,10 +180,10 @@ index 0000000000000000000000000000000000000000..fab62b8ff10eaa75f4b5c8032aac69f9
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index a4f8e7f1cd0a66f8360a2f546c2ab5955d91ea7d..c72811f9faef36614c4bfbcb605cf7314d455a45 100644
+index ac033b15f713845611e5e4e6418a3b7da83686bd..116ea123a9ce9357b6757a508eb411de8b085284 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -951,6 +951,7 @@ public final class CraftServer implements Server {
+@@ -958,6 +958,7 @@ public final class CraftServer implements Server {
          org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
          this.console.paperConfigurations.reloadConfigs(this.console);
          org.purpurmc.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur
@@ -191,7 +191,7 @@ index a4f8e7f1cd0a66f8360a2f546c2ab5955d91ea7d..c72811f9faef36614c4bfbcb605cf731
          for (ServerLevel world : this.console.getAllLevels()) {
              // world.serverLevelData.setDifficulty(config.difficulty); // Paper - per level difficulty
              world.setSpawnSettings(world.serverLevelData.getDifficulty() != Difficulty.PEACEFUL && config.spawnMonsters, config.spawnAnimals); // Paper - per level difficulty (from MinecraftServer#setDifficulty(ServerLevel, Difficulty, boolean))
-@@ -2728,6 +2729,11 @@ public final class CraftServer implements Server {
+@@ -2750,6 +2751,11 @@ public final class CraftServer implements Server {
          }
          // Purpur end
  
@@ -204,7 +204,7 @@ index a4f8e7f1cd0a66f8360a2f546c2ab5955d91ea7d..c72811f9faef36614c4bfbcb605cf731
          public void restart() {
              org.spigotmc.RestartCommand.restart();
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index 1f3c4adf3aeb28bcb91cb6913459ea2923ad95a4..17b9c17b8c8703f289f5f7bdf41f604d36797b62 100644
+index 164ad4d292c69380eb1e06b648875d9d9548c8c0..5262b39d3b47624fe52d0b9be73ad097339df8d4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -166,6 +166,14 @@ public class Main {

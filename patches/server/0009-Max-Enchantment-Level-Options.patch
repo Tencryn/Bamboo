@@ -55,7 +55,7 @@ index d6c354856c71d9629828e2ddbe316306bfaf6ea6..ce1eb8057fef0aa80a8da294405feace
  
      @Override
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
-index f8ccc90054fd29beeafbc92598dc16e733a63333..f874f5939d4e8cf7d7f88a630972d530195429d4 100644
+index cbd39863b75245f1a5a16ab49f09238c034e09d2..999698e560cd672ccdb349fcfd219cc96430d8c0 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/DigDurabilityEnchantment.java
 @@ -22,7 +22,7 @@ public class DigDurabilityEnchantment extends Enchantment {
@@ -155,7 +155,7 @@ index 41e3f792b38cfd30dd5e8cd62e141e54b7d12219..a0be6d08de916daf07f8111dbe7d1a40
      }
  }
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
-index 6b77043907851ef992fd03f3bc4c1e97cf910248..25740468286192e4d7174d29a9dfeedcadc0c1f2 100644
+index a38194accb2d0ba204ab2f81b4be6031842faf9c..c3a70a33d190c939ef1d72fbfea50e25ab4033cc 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ProtectionEnchantment.java
 @@ -25,7 +25,7 @@ public class ProtectionEnchantment extends Enchantment {
@@ -205,7 +205,7 @@ index ba80b900d58716bd7181cec4644966c56542b2d5..8d962201bf4384c6e20632ddbcafca7c
  
      public static float getSweepingDamageRatio(int level) {
 diff --git a/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java b/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
-index 78323de4fc68f1f70b235e9421cf8f9cec7abebc..f2e13cca568ae7d37b5f58e9d1a4473ea5aa9b23 100644
+index 97f61bfdf39def907d7d3686914189f7545937ef..798634fa0463bf8be5bb441ee3fa7ec1ce981fd1 100644
 --- a/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
 +++ b/src/main/java/net/minecraft/world/item/enchantment/ThornsEnchantment.java
 @@ -28,7 +28,7 @@ public class ThornsEnchantment extends Enchantment {
@@ -269,12 +269,12 @@ index 4ca8411508e0b2d9edf861ed92adbf07a5c6b3e7..cc23b450a7b9eda6a3c6e7f65d10732a
  
      @Override
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-index 756825f65117a1931a0f68b122f30a9602efecaf..20d132e36ef02241cdf4fdc1500265eea590f91f 100644
+index 9a53741c985a30b4231e45aac42e0e7cabdbb0a0..7a0cedf4025cd71040ea68e63bc74062f8a01189 100644
 --- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
 +++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-@@ -148,4 +148,48 @@ public class BambooConfig {
- 
+@@ -147,4 +147,48 @@ public class BambooConfig {
      private static void villagerNerfEnabled() { villagerNerfEnabled = getBoolean("mobs.passive.villager.nerf.enabled", villagerNerfEnabled); }
+     private static void villagerNerfRequiresEmeraldBlock() { villagerNerfRequiresEmeraldBlock = getBoolean("mobs.passive.villager.nerf.require-emerald-block-below", villagerNerfRequiresEmeraldBlock); }
      private static void villagerNerfCheck() { villagerNerfCheck = getInt("mobs.passive.villager.nerf.check-interval", villagerNerfCheck); }
 +
 +    public static int maxArrowDamageEnchantment = 5;

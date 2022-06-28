@@ -18,10 +18,10 @@ index 411593b1b105d62440d76b7bd1b8c74b701e3e75..ee2ed3338f0712b16c5e535f612879e0
                     for (AttributeModifier modifier : player.getMainHandItem().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE)) {
                         attackDamage += modifier.getAmount();
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-index fb55986de1adf481991f5494a5149658a2b74aba..fcd8ea29261e58e8eac818e891068a3b9ec86655 100644
+index 7a0cedf4025cd71040ea68e63bc74062f8a01189..6c23f857452ebbfb0255b663de48acb07552a2a0 100644
 --- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
 +++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-@@ -194,4 +194,7 @@ public class BambooConfig {
+@@ -191,4 +191,7 @@ public class BambooConfig {
      private static void maxTridentLoyaltyEnchantment() { maxTridentLoyaltyEnchantment = getInt("max-enchantment-levels.trident-loyalty", maxTridentLoyaltyEnchantment); }
      private static void maxTridentRiptideEnchantment() { maxTridentRiptideEnchantment = getInt("max-enchantment-levels.trident-riptide", maxTridentRiptideEnchantment); }
      private static void maxWaterWalkerEnchantment() { maxWaterWalkerEnchantment = getInt("max-enchantment-levels.water-walker", maxWaterWalkerEnchantment); }

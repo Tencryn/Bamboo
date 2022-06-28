@@ -59,13 +59,13 @@ index 6fc891e78b7a3839755a719ebc23f2ed2d714870..af5f1bdd206e736f658ebcef389617bf
                  }
  
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-index 17d253f2859f733b66efff43a1f455298cccc13d..2c8ca798ec4b93e2c4170ee347675bdd93bc31ae 100644
+index 6aeede351a536fffe3f4ab3e55f0a5f5100b728a..246b0d2e226e5fe34f7cac7028cdc87ca5153ef8 100644
 --- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
 +++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-@@ -139,4 +139,7 @@ public class BambooConfig {
+@@ -136,4 +136,7 @@ public class BambooConfig {
  
-     public static Boolean sheepGriefGrass = true;
-     private static void sheepGriefGrass() { sheepGriefGrass = getBoolean("mobs.passive.sheep.grief-grass", sheepGriefGrass); }
+     public static Boolean preserveFuel = false;
+     private static void preserveFuel() { preserveFuel = getBoolean("blocks.furnaces.preserve-fuel", preserveFuel); }
 +
 +    public static Boolean endermanSpawnerTeleport = true;
 +    private static void endermanSpawnerTeleport() { endermanSpawnerTeleport = getBoolean("mobs.hostile.enderman.teleport-if-spawned-via-spawner", endermanSpawnerTeleport); }

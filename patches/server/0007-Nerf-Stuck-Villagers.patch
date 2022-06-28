@@ -283,10 +283,10 @@ index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..cb7ca2719def933581e9072565307477
  
      @Override
 diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-index 2c8ca798ec4b93e2c4170ee347675bdd93bc31ae..514dd1ea912cdabd85701bc40e968072a831cb5e 100644
+index 246b0d2e226e5fe34f7cac7028cdc87ca5153ef8..9a53741c985a30b4231e45aac42e0e7cabdbb0a0 100644
 --- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
 +++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
-@@ -142,4 +142,12 @@ public class BambooConfig {
+@@ -139,4 +139,12 @@ public class BambooConfig {
  
      public static Boolean endermanSpawnerTeleport = true;
      private static void endermanSpawnerTeleport() { endermanSpawnerTeleport = getBoolean("mobs.hostile.enderman.teleport-if-spawned-via-spawner", endermanSpawnerTeleport); }
