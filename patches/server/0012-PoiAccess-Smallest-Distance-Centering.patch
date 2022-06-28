@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tencryn <41876297+Tencryn@users.noreply.github.com>
+Date: Wed, 29 Jun 2022 00:10:39 +0100
+Subject: [PATCH] PoiAccess Smallest Distance Centering
+
+
+diff --git a/src/main/java/io/papermc/paper/util/PoiAccess.java b/src/main/java/io/papermc/paper/util/PoiAccess.java
+index 1e7be5da4907616ad9e1e01a2227d29b6dd54b32..949c2ec260f1922926cc22db6c88b8e18850e185 100644
+--- a/src/main/java/io/papermc/paper/util/PoiAccess.java
++++ b/src/main/java/io/papermc/paper/util/PoiAccess.java
+@@ -33,8 +33,11 @@ public final class PoiAccess {
+ 
+     protected static double getSmallestDistanceSquared(final double boxMinX, final double boxMinY, final double boxMinZ,
+                                                        final double boxMaxX, final double boxMaxY, final double boxMaxZ,
++                                                       final double uCircleX, final double uCircleY, final double uCircleZ) {
++        final double circleX = uCircleX + 0.5;
++        final double circleY = uCircleY + 0.5;
++        final double circleZ = uCircleZ + 0.5;
+ 
+-                                                       final double circleX, final double circleY, final double circleZ) {
+         // is the circle center inside the box?
+         if (circleX >= boxMinX && circleX <= boxMaxX && circleY >= boxMinY && circleY <= boxMaxY && circleZ >= boxMinZ && circleZ <= boxMaxZ) {
+             return 0.0;
