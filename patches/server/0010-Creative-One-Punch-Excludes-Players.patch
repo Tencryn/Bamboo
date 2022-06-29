@@ -5,7 +5,7 @@ Subject: [PATCH] Creative One Punch Excludes Players
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 411593b1b105d62440d76b7bd1b8c74b701e3e75..ee2ed3338f0712b16c5e535f612879e008aa03b1 100644
+index 411593b1b105d62440d76b7bd1b8c74b701e3e75..f8ed2d8e3592ffe679c487f2121b92de9b497b10 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -2229,7 +2229,7 @@ public abstract class LivingEntity extends Entity {
@@ -13,7 +13,7 @@ index 411593b1b105d62440d76b7bd1b8c74b701e3e75..ee2ed3338f0712b16c5e535f612879e0
             // Purpur start
             if (damagesource.getEntity() instanceof net.minecraft.world.entity.player.Player player && damagesource.getEntity().level.purpurConfig.creativeOnePunch) {
 -               if (player.isCreative()) {
-+               if (player.isCreative() && (!human || net.rocryn.bamboo.BambooConfig.creativeOnePunchExcludesPlayers)) { // Bamboo
++               if (player.isCreative() && (!human || !net.rocryn.bamboo.BambooConfig.creativeOnePunchExcludesPlayers)) { // Bamboo
                     double attackDamage = 0;
                     for (AttributeModifier modifier : player.getMainHandItem().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE)) {
                         attackDamage += modifier.getAmount();
