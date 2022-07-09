@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tencryn <41876297+Tencryn@users.noreply.github.com>
+Date: Wed, 6 Jul 2022 14:45:42 +0100
+Subject: [PATCH] VillagerVirtualWorkstationChangeEvent
+
+
+diff --git a/src/main/java/net/rocryn/bamboo/event/entity/VillagerVirtualWorkstationChangeEvent.java b/src/main/java/net/rocryn/bamboo/event/entity/VillagerVirtualWorkstationChangeEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..5c52201bbf3e8077d3567a2e7a270cc3cc569171
+--- /dev/null
++++ b/src/main/java/net/rocryn/bamboo/event/entity/VillagerVirtualWorkstationChangeEvent.java
+@@ -0,0 +1,49 @@
++package net.rocryn.bamboo.event.entity;
++
++import org.bukkit.Location;
++import org.bukkit.entity.Mob;
++import org.bukkit.entity.Player;
++import org.bukkit.entity.Villager;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.entity.EntityEvent;
++import org.jetbrains.annotations.NotNull;
++
++public class VillagerVirtualWorkstationChangeEvent extends EntityEvent implements Cancellable  {
++    private static final HandlerList handlers = new HandlerList();
++    private boolean cancelled;
++    private final Player player;
++
++    public VillagerVirtualWorkstationChangeEvent(@NotNull Villager what, @NotNull Player who) {
++        super(what);
++        this.player = who;
++    }
++
++    @Override
++    public @NotNull Villager getEntity() {
++        return (Villager) super.getEntity();
++    }
++
++    public @NotNull Player getPlayer() {
++        return this.player;
++    }
++
++    @Override
++    public boolean isCancelled() {
++        return this.cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        this.cancelled = cancel;
++    }
++
++    @Override
++    public @NotNull HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static @NotNull HandlerList getHandlerList() {
++        return handlers;
++    }
++}

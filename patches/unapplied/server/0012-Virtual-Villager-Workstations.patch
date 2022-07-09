@@ -1,0 +1,615 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tencryn <41876297+Tencryn@users.noreply.github.com>
+Date: Sat, 2 Jul 2022 13:47:50 +0100
+Subject: [PATCH] Virtual Villager Workstations
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/ShowTradesToPlayer.java b/src/main/java/net/minecraft/world/entity/ai/behavior/ShowTradesToPlayer.java
+index 90ba6a3abf62e4b272fada96b554ca31f72921ae..c0010cb2d3bb3164c826803bb0e14b412e3dc460 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/ShowTradesToPlayer.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/ShowTradesToPlayer.java
+@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.Brain;
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+ import net.minecraft.world.entity.ai.memory.MemoryStatus;
+ import net.minecraft.world.entity.npc.Villager;
++import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.trading.MerchantOffer;
+ 
+@@ -114,6 +115,13 @@ public class ShowTradesToPlayer extends Behavior<Villager> {
+     }
+ 
+     private static void clearHeldItem(Villager villager) {
++        // Bamboo start
++        if (villager.getVirtualWorkstation().hasWorkstation()) {
++            displayAsHeldItem(villager, villager.getVirtualWorkstation().getWorkstation());
++            return;
++        }
++        // Bamboo stop
++
+         villager.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+         villager.setDropChance(EquipmentSlot.MAINHAND, 0.085F);
+     }
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java b/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
+index be86237ae0a4b88f2cbbb0990a50d42a844dca85..d778122a6e32c8b083eb05adb5af8f43038a0ad3 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
+@@ -14,17 +14,38 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
+ import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+ import net.minecraft.world.entity.npc.Villager;
+ import net.minecraft.world.entity.npc.VillagerProfession;
++import net.rocryn.bamboo.world.entity.ai.behavior.RestockTrades;
+ 
+ public class VillagerGoalPackages {
+     private static final float STROLL_SPEED_MODIFIER = 0.4F;
+ 
+     public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getCorePackage(VillagerProfession profession, float speed) {
+         // Bamboo start
+-        return getCorePackage(profession, speed, false);
++        return getCorePackage(profession, speed, false, false);
+     }
+-    public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getCorePackage(VillagerProfession profession, float speed, boolean nerfed) {
++    public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getCorePackage(VillagerProfession profession, float speed, boolean nerfed, boolean virtual) {
+         if (nerfed) {
+-            return getNerfedCorePackage(profession, speed);
++            return getNerfedCorePackage(profession, speed, virtual);
++        }
++        if (virtual) {
++            return ImmutableList.of(
++                Pair.of(0, new Swim(0.8F)),
++                Pair.of(0, new InteractWithDoor()),
++                Pair.of(0, new LookAtTargetSink(45, 90)),
++                Pair.of(0, new VillagerPanicTrigger()),
++                Pair.of(0, new WakeUp()),
++                Pair.of(0, new ReactToBell()),
++                Pair.of(0, new SetRaidStatus()),
++                Pair.of(1, new MoveToTargetSink()),
++                Pair.of(3, new LookAndFollowTradingPlayerSink(speed)),
++                Pair.of(5, new GoToWantedItem(speed, false, 4)),
++                Pair.of(10, new AcquirePoi((holder) -> {
++                    return holder.is(PoiTypes.HOME);
++                }, MemoryModuleType.HOME, false, Optional.of((byte)14))),
++                Pair.of(10, new AcquirePoi((holder) -> {
++                    return holder.is(PoiTypes.MEETING);
++                }, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
++            );
+         }
+         // Bamboo end
+         return ImmutableList.of(Pair.of(0, new Swim(0.8F)), Pair.of(0, new InteractWithDoor()), Pair.of(0, new LookAtTargetSink(45, 90)), Pair.of(0, new VillagerPanicTrigger()), Pair.of(0, new WakeUp()), Pair.of(0, new ReactToBell()), Pair.of(0, new SetRaidStatus()), Pair.of(0, new ValidateNearbyPoi(profession.heldJobSite(), MemoryModuleType.JOB_SITE)), Pair.of(0, new ValidateNearbyPoi(profession.acquirableJobSite(), MemoryModuleType.POTENTIAL_JOB_SITE)), Pair.of(1, new MoveToTargetSink()), Pair.of(2, new PoiCompetitorScan(profession)), Pair.of(3, new LookAndFollowTradingPlayerSink(speed)), Pair.of(5, new GoToWantedItem(speed, false, 4)), Pair.of(6, new AcquirePoi(profession.acquirableJobSite(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())), Pair.of(7, new GoToPotentialJobSite(speed)), Pair.of(8, new YieldJobSite(speed)), Pair.of(10, new AcquirePoi((holder) -> {
+@@ -41,11 +62,27 @@ public class VillagerGoalPackages {
+     public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getWorkPackage(VillagerProfession profession, float speed, boolean clericsFarmWarts) {
+         // Purpur end
+         // Bamboo start
+-        return getWorkPackage(profession, speed, clericsFarmWarts, false);
++        return getWorkPackage(profession, speed, clericsFarmWarts, false, false);
+     }
+-    public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getWorkPackage(VillagerProfession profession, float speed, boolean clericsFarmWarts, boolean nerfed) {
++    public static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getWorkPackage(VillagerProfession profession, float speed, boolean clericsFarmWarts, boolean nerfed, boolean virtual) {
+         if (nerfed) {
+-            return getNerfedWorkPackage(profession, speed);
++            return getNerfedWorkPackage(profession, speed, virtual);
++        }
++        if (virtual) {
++            return ImmutableList.of(
++                getMinimalLookBehavior(),
++                Pair.of(5, new RunOne<>(
++                    ImmutableList.of(
++                        Pair.of(new RestockTrades(), 7),
++                        Pair.of(new HarvestFarmland(), profession == VillagerProfession.FARMER ? 2 : 5),
++                        Pair.of(new UseBonemeal(), profession == VillagerProfession.FARMER ? 4 : 7)
++                    )
++                )),
++                Pair.of(10, new ShowTradesToPlayer(400, 1600)),
++                Pair.of(10, new SetLookAndInteract(EntityType.PLAYER, 4)),
++                Pair.of(3, new GiveGiftToHero(100)),
++                Pair.of(99, new UpdateActivityFromSchedule())
++            );
+         }
+         // Bamboo end
+         WorkAtPoi workAtPoi;
+@@ -113,7 +150,14 @@ public class VillagerGoalPackages {
+     }
+ 
+     // Bamboo start
+-    private static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getNerfedCorePackage(VillagerProfession profession, float speed) {
++    private static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getNerfedCorePackage(VillagerProfession profession, float speed, boolean virtual) {
++        if (virtual) {
++            return ImmutableList.of(
++                Pair.of(0, new LookAtTargetSink(45, 90)),
++                Pair.of(3, new LookAndFollowTradingPlayerSink(speed))
++            );
++        }
++
+         return ImmutableList.of(
+             Pair.of(0, new LookAtTargetSink(45, 90)),
+             Pair.of(0, new ValidateNearbyPoi(profession.heldJobSite(), MemoryModuleType.JOB_SITE)),
+@@ -125,12 +169,12 @@ public class VillagerGoalPackages {
+             Pair.of(10, new ResetProfession())
+         );
+     }
+-    private static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getNerfedWorkPackage(VillagerProfession profession, float speed) {
++    private static ImmutableList<Pair<Integer, ? extends Behavior<? super Villager>>> getNerfedWorkPackage(VillagerProfession profession, float speed, boolean virtual) {
+         return ImmutableList.of(
+             getMinimalLookBehavior(),
+             Pair.of(5, new RunOne<>(
+                 ImmutableList.of(
+-                    Pair.of(new WorkAtPoi(), 7)
++                    Pair.of(virtual ? new RestockTrades() : new WorkAtPoi(), 7)
+                 )
+             )),
+             Pair.of(10, new ShowTradesToPlayer(400, 1600)),
+diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
+index 00c2ba8b45bc76496d7c43670926e6871a109757..f428cb6e2e4b2cb9c969abac01936c20735842fc 100644
+--- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
++++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
+@@ -18,10 +18,8 @@ import java.util.Set;
+ import java.util.function.BiPredicate;
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+-import net.minecraft.core.BlockPos;
+-import net.minecraft.core.GlobalPos;
+-import net.minecraft.core.Holder;
+-import net.minecraft.core.Registry;
++
++import net.minecraft.core.*;
+ import net.minecraft.core.particles.ParticleTypes;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.ListTag;
+@@ -32,6 +30,7 @@ import net.minecraft.network.protocol.game.DebugPackets;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+@@ -47,19 +46,11 @@ import net.minecraft.world.SimpleContainer;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.effect.MobEffectInstance;
+ import net.minecraft.world.effect.MobEffects;
+-import net.minecraft.world.entity.AgeableMob;
+-import net.minecraft.world.entity.Entity;
+-import net.minecraft.world.entity.EntityType;
+-import net.minecraft.world.entity.ExperienceOrb;
+-import net.minecraft.world.entity.LightningBolt;
+-import net.minecraft.world.entity.LivingEntity;
+-import net.minecraft.world.entity.Mob;
+-import net.minecraft.world.entity.MobSpawnType;
+-import net.minecraft.world.entity.ReputationEventHandler;
+-import net.minecraft.world.entity.SpawnGroupData;
++import net.minecraft.world.entity.*;
+ import net.minecraft.world.entity.ai.Brain;
+ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+ import net.minecraft.world.entity.ai.attributes.Attributes;
++import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
+ import net.minecraft.world.entity.ai.behavior.VillagerGoalPackages;
+ import net.minecraft.world.entity.ai.gossip.GossipContainer;
+ import net.minecraft.world.entity.ai.gossip.GossipType;
+@@ -89,6 +80,17 @@ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.phys.AABB;
++import net.minecraft.world.phys.Vec3;
++import net.rocryn.bamboo.BambooConfig;
++import net.rocryn.bamboo.event.entity.VillagerVirtualWorkstationChangeEvent;
++import net.rocryn.bamboo.world.entity.npc.VillagerVirtualWorkstation;
++import org.bukkit.Material;
++import org.bukkit.block.Block;
++import org.bukkit.block.BlockState;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.event.block.BlockBreakEvent;
++import org.bukkit.event.block.BlockPlaceEvent;
++import org.bukkit.inventory.EquipmentSlot;
+ import org.slf4j.Logger;
+ 
+ // CraftBukkit start
+@@ -146,6 +148,10 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+     private boolean isNerfed = false; public boolean isNerfed() { return this.isNerfed; } // Bamboo
+     private int notNerfedCount = 0; // Bamboo
+ 
++    private boolean virtualWorkstationEnabled = false; public boolean VirtualWorkstationEnabled() { return this.virtualWorkstationEnabled; } // Bamboo
++    private VillagerVirtualWorkstation virtualWorkstation; // Bamboo
++    public VillagerVirtualWorkstation getVirtualWorkstation() { return this.virtualWorkstation; } // Bamboo
++
+     public long nextGolemPanic = -1; // Pufferfish
+ 
+     public Villager(EntityType<? extends Villager> entityType, Level world) {
+@@ -160,6 +166,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+         this.setCanPickUpLoot(true);
+         this.setVillagerData(this.getVillagerData().setType(type).setProfession(VillagerProfession.NONE));
+         this.brainTickOffset = getRandom().nextInt(100); // Purpur
++        this.virtualWorkstation = new VillagerVirtualWorkstation(); // Bamboo
+     }
+ 
+     // Purpur start
+@@ -293,6 +300,71 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+ 
+         return block == Blocks.EMERALD_BLOCK;
+     }
++
++    @Override
++    public boolean hurt(DamageSource source, float amount) {
++        if (source.getEntity() instanceof Player && this.virtualWorkstation.hasWorkstation()) {
++            VillagerVirtualWorkstationChangeEvent event = new VillagerVirtualWorkstationChangeEvent(
++                (org.bukkit.entity.Villager) this.getBukkitEntity(),
++                (org.bukkit.entity.Player) source.getEntity().getBukkitEntity()
++            );
++
++            this.level.getCraftServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled()) {
++                this.unsetVirtualWorkstation(source.getEntity().position(), true);
++            }
++
++            return false;
++        }
++
++        return super.hurt(source, amount);
++    }
++
++    public boolean setVirtualWorkstation(ItemStack itemStack) { return setVirtualWorkstation(itemStack.getItem()); }
++    public boolean setVirtualWorkstation(Item item) {
++        if (!this.virtualWorkstation.hasWorkstation()) {
++            VillagerProfession profession = this.getVillagerData().getProfession();
++
++            if (this.virtualWorkstation.isValidWorkstation(item, profession)) {
++                this.virtualWorkstation.assignWorkstation(item);
++
++                if (profession == VillagerProfession.NONE) {
++                    this.setVillagerData(this.getVillagerData().setProfession(this.virtualWorkstation.getAttachedProfession()));
++                }
++
++                if (this.level instanceof ServerLevel) {
++                    this.refreshBrain((ServerLevel) this.level);
++                }
++
++                return true;
++            }
++        }
++
++        return false;
++    }
++
++    public void unsetVirtualWorkstation(Vec3 position, boolean refresh) {
++        // Vec3i.ZERO
++        if (this.virtualWorkstation.hasWorkstation()) {
++            if (position != Vec3.ZERO) {
++                BehaviorUtils.throwItem(this, this.virtualWorkstation.getWorkstation(), position);
++            } else {
++                ItemEntity itemEntity = new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), this.virtualWorkstation.getWorkstation());
++                this.level.addFreshEntity(itemEntity);
++            }
++
++            this.virtualWorkstation.clearWorkstation();
++
++            if (this.getVillagerXp() == 0) {
++                this.setVillagerData(this.getVillagerData().setProfession(VillagerProfession.NONE));
++            }
++
++            if (refresh && this.level instanceof ServerLevel) {
++                this.refreshBrain((ServerLevel) this.level);
++            }
++        }
++    }
+     // Bamboo end
+ 
+     @Override
+@@ -330,14 +402,23 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+             brain.addActivity(Activity.PLAY, VillagerGoalPackages.getPlayPackage(0.5F));
+         } else {
+             brain.setSchedule(Schedule.VILLAGER_DEFAULT);
+-            brain.addActivityWithConditions(
+-                Activity.WORK,
+-                VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts, this.isNerfed),
+-                ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))
+-            ); // Purpur
++            if (this.virtualWorkstationEnabled) {
++                if (this.virtualWorkstation.hasWorkstation()) {
++                    brain.addActivity(
++                        Activity.WORK,
++                        VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts, this.isNerfed, true)
++                    );
++                }
++            } else {
++                brain.addActivityWithConditions(
++                    Activity.WORK,
++                    VillagerGoalPackages.getWorkPackage(villagerprofession, 0.5F, this.level.purpurConfig.villagerClericsFarmWarts, this.isNerfed, false),
++                    ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryStatus.VALUE_PRESENT))
++                ); // Purpur
++            }
+         }
+ 
+-        brain.addActivity(Activity.CORE, VillagerGoalPackages.getCorePackage(villagerprofession, 0.5F, this.isNerfed));
++        brain.addActivity(Activity.CORE, VillagerGoalPackages.getCorePackage(villagerprofession, 0.5F, this.isNerfed, this.virtualWorkstationEnabled));
+         brain.addActivity(Activity.IDLE, VillagerGoalPackages.getIdlePackage(villagerprofession, 0.5F, this.isNerfed));
+ 
+         if (!this.isNerfed) {
+@@ -421,10 +502,10 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+             // Purpur start
+             boolean tick = (level.getGameTime() + brainTickOffset) % level.purpurConfig.villagerBrainTicks == 0;
+             if (((ServerLevel) level).getServer().lagging ? tick : level.purpurConfig.villagerUseBrainTicksOnlyWhenLagging || tick)
+-            // Purpur end
+-            if ((getRider() == null || !this.isControllable()) && this.behaviorTick++ % this.activatedPriority == 0) // Pufferfish // Purpur - only use brain if no rider
+-            this.getBrain().tick((ServerLevel) this.level, this); // Paper
+-         }
++                // Purpur end
++                if ((getRider() == null || !this.isControllable()) && this.behaviorTick++ % this.activatedPriority == 0) // Pufferfish // Purpur - only use brain if no rider
++                    this.getBrain().tick((ServerLevel) this.level, this); // Paper
++        }
+         // Pufferfish end
+         // Purpur start
+         else if (this.isLobotomized && shouldRestock()) {
+@@ -493,6 +574,45 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+                 boolean flag = this.getOffers().isEmpty();
+ 
+                 if (hand == InteractionHand.MAIN_HAND) {
++                    // Bamboo start
++                    if (net.rocryn.bamboo.BambooConfig.villagerVirtualProfessionsEnabled) {
++                        if (!itemstack.isEmpty()) {
++                            if (this.virtualWorkstationEnabled) {
++                                VillagerVirtualWorkstationChangeEvent event = new VillagerVirtualWorkstationChangeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), (org.bukkit.entity.Player) player.getBukkitEntity());
++
++                                this.level.getCraftServer().getPluginManager().callEvent(event);
++
++                                if (!event.isCancelled()) {
++                                    if (this.setVirtualWorkstation(itemstack)) {
++                                        this.playSound(SoundEvents.VILLAGER_YES, this.getSoundVolume(), this.getVoicePitch());
++
++                                        if (!player.getAbilities().instabuild) {
++                                            itemstack.shrink(1);
++                                        }
++
++                                        return InteractionResult.CONSUME;
++                                    }
++                                }
++                            }
++
++                            if (net.rocryn.bamboo.BambooConfig.villagerVirtualProfessionsToggleable) {
++                                if (itemstack.is(Items.STICK)) {
++                                    this.unsetVirtualWorkstation(player.position(), false);
++                                    this.virtualWorkstationEnabled = !this.virtualWorkstationEnabled;
++
++                                    if (this.level instanceof ServerLevel) {
++                                        this.refreshBrain((ServerLevel) this.level);
++                                    }
++
++                                    this.playSound(this.virtualWorkstationEnabled ? SoundEvents.VILLAGER_YES : SoundEvents.VILLAGER_NO,
++                                        this.getSoundVolume(), this.getVoicePitch());
++                                    return InteractionResult.SUCCESS;
++                                }
++                            }
++                        }
++                    }
++                    // Bamboo end
++
+                     if (flag && !this.level.isClientSide) {
+                         this.setUnhappy();
+                     }
+@@ -726,6 +846,11 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+         if (this.isNerfed) {
+             nbt.putBoolean("Bamboo.Nerfed", true);
+         }
++
++        nbt.putBoolean("Bamboo.VirtualWorkstationEnabled", this.virtualWorkstationEnabled);
++        if (this.virtualWorkstation.hasWorkstation()) {
++            nbt.putString("Bamboo.VirtualWorkstation", Registry.ITEM.getKey(this.virtualWorkstation.getWorkstation().getItem()).toString());
++        }
+         // Bamboo end
+     }
+ 
+@@ -773,6 +898,15 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+                 this.refreshBrain((ServerLevel) this.level);
+             }
+         }
++        if (net.rocryn.bamboo.BambooConfig.villagerVirtualProfessionsEnabled) {
++            if (nbt.contains("Bamboo.VirtualWorkstationEnabled")) {
++                this.virtualWorkstationEnabled = nbt.getBoolean("Bamboo.VirtualWorkstationEnabled");
++            }
++            if (nbt.contains("Bamboo.VirtualWorkstation")) {
++                Item workstation = Registry.ITEM.get(new ResourceLocation(nbt.getString("Bamboo.VirtualWorkstation")));
++                setVirtualWorkstation(workstation);
++            }
++        }
+         // Bamboo end
+     }
+ 
+@@ -870,6 +1004,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+         }
+ 
+         this.releaseAllPois();
++        this.unsetVirtualWorkstation(Vec3.ZERO, false);
+         super.die(damageSource);
+     }
+ 
+@@ -1022,6 +1157,17 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+             this.assignProfessionWhenSpawned = true;
+         }
+ 
++        // Bamboo start
++        if (net.rocryn.bamboo.BambooConfig.villagerVirtualProfessionsEnabled) {
++            if (!net.rocryn.bamboo.BambooConfig.villagerVirtualProfessionsToggleable) {
++                this.virtualWorkstationEnabled = true;
++                if (this.level instanceof ServerLevel) {
++                    this.refreshBrain((ServerLevel) this.level);
++                }
++            }
++        }
++        // Bamboo end
++
+         return super.finalizeSpawn(world, difficulty, spawnReason, entityData, entityNbt);
+     }
+ 
+@@ -1074,6 +1220,8 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+             world.addFreshEntityWithPassengers(entitywitch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+             // CraftBukkit end
+             this.releaseAllPois();
++
++            this.unsetVirtualWorkstation(Vec3.ZERO, false);
+             this.discard();
+         } else {
+             super.thunderHit(world, lightning);
+diff --git a/src/main/java/net/minecraft/world/item/BlockItem.java b/src/main/java/net/minecraft/world/item/BlockItem.java
+index fa12a9b6daa82dd032a86f78613a3c3cb32e9660..8b57475cc33d690c9a4929f4ceb33b1154433b7e 100644
+--- a/src/main/java/net/minecraft/world/item/BlockItem.java
++++ b/src/main/java/net/minecraft/world/item/BlockItem.java
+@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
+ import net.minecraft.world.level.block.state.properties.Property;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.shapes.CollisionContext;
++import org.bukkit.Bukkit;
+ import org.bukkit.craftbukkit.block.CraftBlock;
+ import org.bukkit.craftbukkit.block.data.CraftBlockData;
+ import org.bukkit.event.block.BlockCanBuildEvent;
+diff --git a/src/main/java/net/rocryn/bamboo/BambooConfig.java b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+index 6c23f857452ebbfb0255b663de48acb07552a2a0..2297f7873f16aef86cdd456687a6674438780aeb 100644
+--- a/src/main/java/net/rocryn/bamboo/BambooConfig.java
++++ b/src/main/java/net/rocryn/bamboo/BambooConfig.java
+@@ -148,6 +148,12 @@ public class BambooConfig {
+     private static void villagerNerfRequiresEmeraldBlock() { villagerNerfRequiresEmeraldBlock = getBoolean("mobs.passive.villager.nerf.require-emerald-block-below", villagerNerfRequiresEmeraldBlock); }
+     private static void villagerNerfCheck() { villagerNerfCheck = getInt("mobs.passive.villager.nerf.check-interval", villagerNerfCheck); }
+ 
++    public static Boolean villagerVirtualProfessionsEnabled = false;
++    public static Boolean villagerVirtualProfessionsToggleable = false;
++
++    private static void villagerVirtualProfessionsEnabled() { villagerVirtualProfessionsEnabled = getBoolean("mobs.passive.villager.virtual-professions.enabled", villagerVirtualProfessionsEnabled); }
++    private static void villagerVirtualProfessionsToggleable() { villagerVirtualProfessionsToggleable = getBoolean("mobs.passive.villager.virtual-professions.use-toggle", villagerVirtualProfessionsToggleable); }
++
+     public static int maxArrowDamageEnchantment = 5;
+     public static int maxArrowKnockbackEnchantment = 2;
+     public static int maxArrowPiercingEnchantment = 4;
+diff --git a/src/main/java/net/rocryn/bamboo/world/entity/ai/behavior/RestockTrades.java b/src/main/java/net/rocryn/bamboo/world/entity/ai/behavior/RestockTrades.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..88a531b0a6ee6b1f90eef7965b61a2f54d076580
+--- /dev/null
++++ b/src/main/java/net/rocryn/bamboo/world/entity/ai/behavior/RestockTrades.java
+@@ -0,0 +1,40 @@
++package net.rocryn.bamboo.world.entity.ai.behavior;
++
++import com.google.common.collect.ImmutableMap;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.world.entity.ai.behavior.Behavior;
++import net.minecraft.world.entity.npc.Villager;
++
++public class RestockTrades extends Behavior<Villager> {
++    private long lastCheck;
++
++    public RestockTrades() {
++        super(ImmutableMap.of());
++    }
++
++    @Override
++    protected boolean checkExtraStartConditions(ServerLevel serverLevel, Villager villager) {
++        if (serverLevel.getGameTime() - this.lastCheck < 300L) {
++            return false;
++        } else if (serverLevel.random.nextInt(2) != 0) {
++            return false;
++        } else {
++            this.lastCheck = serverLevel.getGameTime();
++            return true;
++        }
++    }
++
++    @Override
++    protected void start(ServerLevel world, Villager entity, long time) {
++        entity.playWorkSound();
++        if (entity.shouldRestock()) {
++            entity.restock();
++        }
++
++    }
++
++    @Override
++    protected boolean canStillUse(ServerLevel world, Villager entity, long time) {
++        return true;
++    }
++}
+diff --git a/src/main/java/net/rocryn/bamboo/world/entity/npc/VillagerVirtualWorkstation.java b/src/main/java/net/rocryn/bamboo/world/entity/npc/VillagerVirtualWorkstation.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..170bb00d214a4d4e15866a917cff895161c0fd7d
+--- /dev/null
++++ b/src/main/java/net/rocryn/bamboo/world/entity/npc/VillagerVirtualWorkstation.java
+@@ -0,0 +1,84 @@
++package net.rocryn.bamboo.world.entity.npc;
++
++import com.google.common.collect.ImmutableMap;
++import net.minecraft.world.entity.npc.VillagerProfession;
++import net.minecraft.world.item.Item;
++import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.item.Items;
++
++import java.util.AbstractMap;
++import java.util.Map;
++
++public class VillagerVirtualWorkstation {
++    private static final ImmutableMap<Item, VillagerProfession> validWorkstations = ImmutableMap.ofEntries(
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.BLAST_FURNACE, VillagerProfession.ARMORER),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.SMOKER, VillagerProfession.BUTCHER),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.CARTOGRAPHY_TABLE, VillagerProfession.CARTOGRAPHER),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.BREWING_STAND, VillagerProfession.CLERIC),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.COMPOSTER, VillagerProfession.FARMER),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.BARREL, VillagerProfession.FISHERMAN),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.FLETCHING_TABLE, VillagerProfession.FLETCHER),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.CAULDRON, VillagerProfession.LEATHERWORKER),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.LECTERN, VillagerProfession.LIBRARIAN),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.STONECUTTER, VillagerProfession.MASON),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.LOOM, VillagerProfession.SHEPHERD),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.SMITHING_TABLE, VillagerProfession.TOOLSMITH),
++        new AbstractMap.SimpleEntry<Item, VillagerProfession>(Items.GRINDSTONE, VillagerProfession.WEAPONSMITH)
++    );
++
++    private ItemStack workstation = ItemStack.EMPTY;
++    private VillagerProfession attachedProfession = VillagerProfession.NONE;
++
++    public VillagerVirtualWorkstation() {}
++
++    public ItemStack getWorkstation() { return this.workstation; }
++    public VillagerProfession getAttachedProfession() { return this.attachedProfession; }
++
++    private void setData(ItemStack itemStack, VillagerProfession profession) {
++        this.workstation = itemStack;
++        this.attachedProfession = profession;
++    }
++
++    public boolean hasWorkstation() {
++        return this.workstation != ItemStack.EMPTY;
++    }
++
++    public boolean isValidWorkstation(Item item) {
++        return validWorkstations.containsKey(item);
++    }
++    public boolean isValidWorkstation(Item item, VillagerProfession profession) {
++        if (isValidWorkstation(item)) {
++            return profession == validWorkstations.get(item) || profession == VillagerProfession.NONE;
++        }
++
++        return false;
++    }
++
++    public boolean assignWorkstation(Item item) {
++        if (this.isValidWorkstation(item)) {
++            this.setData(new ItemStack(item), validWorkstations.get(item));
++            return true;
++        }
++
++        return false;
++    }
++    public boolean assignWorkstation(VillagerProfession profession) {
++        for (Map.Entry<Item, VillagerProfession> entry : validWorkstations.entrySet()) {
++            if (entry.getValue() == profession) {
++                this.setData(new ItemStack(entry.getKey()), entry.getValue());
++                return true;
++            }
++        }
++
++        return false;
++    }
++
++    public boolean clearWorkstation() {
++        if  (this.hasWorkstation()) {
++            this.setData(ItemStack.EMPTY, VillagerProfession.NONE);
++            return true;
++        }
++
++        return false;
++    }
++}
