@@ -5,7 +5,7 @@ Subject: [PATCH] Nerf Stuck Villagers
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-index bf3b8ccb3e031e0ad24cd51e28ea8cbd4f8a8030..5ca7cf30d737c8b585a8f26e2b47d38ce643cc23 100644
+index b56bb0ac37a6d51d645b6189af0ae7da01a353fd..4bf09f19899163aa0910e3bd8ce6f7402bc7e26b 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 @@ -22,6 +22,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -27,7 +27,7 @@ index bf3b8ccb3e031e0ad24cd51e28ea8cbd4f8a8030..5ca7cf30d737c8b585a8f26e2b47d38c
 +        io.papermc.paper.util.PoiAccess.findNearestPoiPositions(poiManager, this.poiType, predicate, entity.blockPosition(), radius, radius*radius, PoiManager.Occupancy.HAS_SPACE, false, 5, poiposes); // Bamboo
          Set<Pair<Holder<PoiType>, BlockPos>> set = new java.util.HashSet<>(poiposes);
          // Paper end - optimise POI access
-         Path path = findPathToPois(entity, set);
+         // Pufferfish start - await on path async
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java b/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
 index ba17618784b76384737e876d790eafe76a7cec8d..be86237ae0a4b88f2cbbb0990a50d42a844dca85 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerGoalPackages.java
@@ -150,7 +150,7 @@ index d8cf99a3014a4b8152ae819fa663c2fdf34dce57..d92527d62667116d81d9e773a9dd0908
              return e != entity && e.isAlive();
          });
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index 20668d53625ec88ba3eb2a655ad3f6bc4fb0fd0e..c296e66293a01aa0802c045fdce5a7dd488582f0 100644
+index b1a4b83fc248ae2f0a8852e60f9cd4486535390a..8813e2a48501acfddebdaf2d182423b186439d75 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
 @@ -87,6 +87,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
